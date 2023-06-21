@@ -1,10 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table'
+import { ClassImplementation } from '../../../shared/types/characteristic'
 import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { Characteristic } from '../../../shared/types/characteristic'
 import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
-import { CharTableActions } from '../components/char-table/char-table-actions'
 
-export const charColumns: ColumnDef<Characteristic>[] = [
+export const charClassColumns: ColumnDef<ClassImplementation>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,25 +38,9 @@ export const charColumns: ColumnDef<Characteristic>[] = [
         ),
     },
     {
-        accessorKey: 'type',
+        accessorKey: 'origen',
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Type" />
+            <DataTableColumnHeader column={column} title="Origen" />
         ),
-    },
-
-    {
-        accessorKey: 'code',
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="GoAigua Code" />
-        ),
-    },
-    {
-        id: 'actions',
-        header: 'Actions',
-        cell: ({ cell }) => {
-            const charId = cell.row.original.id.toString()
-
-            return <CharTableActions charId={charId} />
-        },
     },
 ]

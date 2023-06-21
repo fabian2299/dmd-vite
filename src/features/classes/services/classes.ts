@@ -27,6 +27,14 @@ export const classApi = createApi({
                       ]
                     : [{ type: 'Class', id: 'LIST' }],
         }),
+
+        getClassById: builder.query<Class, string>({
+            query: (id) => ({
+                url: `class/${id}`,
+                method: 'GET',
+            }),
+            providesTags: (_result, _error, id) => [{ type: 'Class', id }],
+        }),
         // Mutations
         createClass: builder.mutation<Class, any>({
             query(body) {
@@ -55,7 +63,7 @@ export const classApi = createApi({
                 { type: 'Class', id: 'LIST' },
             ],
         }),
-        deleteClass: builder.mutation<void, number>({
+        deleteClass: builder.mutation<void, string>({
             query(id) {
                 return {
                     url: `class/${id}`,
@@ -69,6 +77,8 @@ export const classApi = createApi({
 
 export const {
     useGetClassesQuery,
+    useGetClassByIdQuery,
+    usePrefetch,
     useCreateClassMutation,
     useUpdateClassMutation,
     useDeleteClassMutation,

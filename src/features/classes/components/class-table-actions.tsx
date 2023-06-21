@@ -1,25 +1,25 @@
-import { useState } from 'react'
-import { DeleteChar } from './delete-char'
-import { Edit } from 'lucide-react'
-import { Button } from '../../../shared/components/ui/button'
-import Modal from '../../../shared/components/ui/modal'
 import { useNavigate } from 'react-router-dom'
-import { EditChar } from './edit-char'
-import { usePrefetch } from '../services/chars'
+import { usePrefetch } from '../services/classes'
+import { useState } from 'react'
+import { Button } from '../../../shared/components/ui/button'
+import { Edit } from 'lucide-react'
+import { Modal } from '../../../shared/components/ui/modal'
+import { ClassDetails } from './class-details'
+import { DeleteClass } from './delete-class'
 
-export function CharTableActions({ charId }: { charId: string }) {
+export function ClassTableActions({ classId }: { classId: string }) {
     const navigate = useNavigate()
-    const prefetchChar = usePrefetch('getCharById')
+    const prefetchChar = usePrefetch('getClassById')
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const handleOpenModal = () => {
         setIsModalOpen(true)
-        navigate(`/resources/chars?charId=${charId}&action=edit`)
+        navigate(`/resources/classes?classId=${classId}`)
     }
 
     const handleCloseModal = () => {
         setIsModalOpen(false)
-        navigate(`/resources/chars`)
+        navigate(`/resources/classes`)
     }
 
     return (
@@ -27,16 +27,16 @@ export function CharTableActions({ charId }: { charId: string }) {
             <Button
                 onClick={handleOpenModal}
                 variant={'outline'}
-                onMouseEnter={() => prefetchChar(charId)}
+                onMouseEnter={() => prefetchChar(classId)}
             >
                 <Edit className="" size={20} />
             </Button>
 
             <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-                <EditChar />
+                <ClassDetails />
             </Modal>
 
-            <DeleteChar charId={charId} />
+            <DeleteClass classId={classId} />
         </div>
     )
 }

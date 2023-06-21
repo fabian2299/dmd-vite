@@ -1,36 +1,26 @@
 import { Button } from '../../../shared/components/ui/button'
 import { ErrorHandlerMap, ErrorTypeEnum } from '../../../shared/lib/errors'
-import { useCreateCharMutation } from '../services/chars'
+import { useCreateClassMutation } from '../services/classes'
 
-export function CreateChar() {
-    const [createChar, { isLoading: isCreating }] = useCreateCharMutation()
+export function CreateClass() {
+    const [createClass, { isLoading: isCreating }] = useCreateClassMutation()
 
     const handleCreate = async () => {
-        const charDTO = {
+        const classDTO = {
             name: 'testt2',
-            type: 'string',
-            description: 'testt',
-            editable: true,
+            isMainClass: false,
+            active: true,
             id: -1,
-            measureUnit: null,
-            origin: '',
-            shortDescription: 'testt',
-            geometry: {
-                name: '',
-                id: -1,
-            },
-            options: [],
-            tenantId: -1,
-            isRefCharacteristic: false,
-            refCharacteristic: null,
-            classImplementations: [],
-            code: null,
+            characteristics: [{ id: 86 }],
             isDeleteable: true,
             isDeleted: false,
             isModifiable: true,
+            tenandId: -1,
+            origen: '',
+            code: null,
         }
         try {
-            await createChar(charDTO).unwrap()
+            await createClass(classDTO).unwrap()
         } catch (error: any) {
             const errType = error.name as ErrorTypeEnum
             errorHandler[errType]()

@@ -1,15 +1,17 @@
+import { Class } from '../../../shared/types/class'
+import { useDataTable } from '../../../shared/hooks/use-data-table'
+import { classColumns } from '../utils/class-columns'
+import { DataTableViewOptions } from '../../../shared/components/table/data-table-view-options'
 import { DataTable } from '../../../shared/components/table/data-table'
 import { DataTablePagination } from '../../../shared/components/table/data-table-pagination'
-import { DataTableViewOptions } from '../../../shared/components/table/data-table-view-options'
 import { Input } from '../../../shared/components/ui/input'
-import { useDataTable } from '../../../shared/hooks/use-data-table'
-import { Characteristic } from '../../../shared/types/characteristic'
-import { charColumns } from '../utils/char-columns'
-import { CreateChar } from './create-char'
+import { CreateClass } from './create-class'
 
-export function CharTable({ data }: { data: Characteristic[] }) {
-    const { globalFilter, setGlobalFilter, table } =
-        useDataTable<Characteristic>({ data, columns: charColumns })
+export function ClassTable({ data }: { data: Class[] }) {
+    const { globalFilter, setGlobalFilter, table } = useDataTable<Class>({
+        data,
+        columns: classColumns,
+    })
 
     return (
         <div className="flex flex-col gap-10">
@@ -26,14 +28,14 @@ export function CharTable({ data }: { data: Characteristic[] }) {
                     className="w-96"
                 />
                 <div className="flex items-center gap-4">
-                    <CreateChar />
+                    <CreateClass />
 
                     <DataTableViewOptions table={table} />
                 </div>
             </div>
 
             <div className="max-h-[780px] overflow-y-auto ">
-                <DataTable table={table} columns={charColumns} />
+                <DataTable table={table} columns={classColumns} />
             </div>
 
             <DataTablePagination table={table} />

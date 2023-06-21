@@ -21,9 +21,8 @@ export const axiosBaseQuery =
         unknown
     > =>
     async ({ url, method, data, params, headers }) => {
+        await new Promise((resolve) => setTimeout(resolve, 1000))
         try {
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-
             const result = await axios({
                 url: baseUrl + url,
                 method,

@@ -10,17 +10,18 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '../../../shared/components/ui/alert-dialog'
-import { Button } from '../../../shared/components/ui/button'
-import { useDeleteCharMutation } from '../services/chars'
-import { useState } from 'react'
 
-export function DeleteChar({ charId }: { charId: string }) {
-    const [deleteChar, { isLoading: isDeleting }] = useDeleteCharMutation()
+import { Button } from '../../../shared/components/ui/button'
+import { useState } from 'react'
+import { useDeleteClassMutation } from '../services/classes'
+
+export function DeleteClass({ classId }: { classId: string }) {
+    const [deleteClass, { isLoading: isDeleting }] = useDeleteClassMutation()
     const [open, setOpen] = useState(false)
 
     const handleDelete = async (id: string) => {
         try {
-            await deleteChar(id).unwrap()
+            await deleteClass(id).unwrap()
         } catch (error) {
             console.log(error)
         } finally {
@@ -42,7 +43,7 @@ export function DeleteChar({ charId }: { charId: string }) {
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         This action cannot be undone. This will permanently
-                        delete the char
+                        delete the class
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -52,7 +53,7 @@ export function DeleteChar({ charId }: { charId: string }) {
                             variant={'destructive'}
                             onClick={(e) => {
                                 e.preventDefault()
-                                handleDelete(charId)
+                                handleDelete(classId)
                             }}
                         >
                             {isDeleting ? 'Deleting...' : 'Delete'}

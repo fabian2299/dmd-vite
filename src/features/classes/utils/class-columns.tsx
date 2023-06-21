@@ -1,10 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table'
+import { Class } from '../../../shared/types/class'
 import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { Characteristic } from '../../../shared/types/characteristic'
 import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
-import { CharTableActions } from '../components/char-table/char-table-actions'
+import { ClassTableActions } from '../components/class-table-actions'
 
-export const charColumns: ColumnDef<Characteristic>[] = [
+export const classColumns: ColumnDef<Class>[] = [
     {
         id: 'select',
         header: ({ table }) => (
@@ -39,10 +39,24 @@ export const charColumns: ColumnDef<Characteristic>[] = [
         ),
     },
     {
-        accessorKey: 'type',
+        accessorKey: 'characteristics',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Type" />
         ),
+        cell: ({ cell }) => {
+            const characteristics = cell.row.original.characteristics
+            const charNames = characteristics
+                .map((char) => char.name)
+                .join(', ')
+
+            return (
+                <span>
+                    {charNames.length > 50
+                        ? charNames.substring(0, 50) + '...'
+                        : charNames}
+                </span>
+            )
+        },
     },
 
     {
@@ -55,9 +69,9 @@ export const charColumns: ColumnDef<Characteristic>[] = [
         id: 'actions',
         header: 'Actions',
         cell: ({ cell }) => {
-            const charId = cell.row.original.id.toString()
+            const classId = cell.row.original.id.toString()
 
-            return <CharTableActions charId={charId} />
+            return <ClassTableActions classId={classId} />
         },
     },
 ]

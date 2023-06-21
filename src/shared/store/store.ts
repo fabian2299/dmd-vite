@@ -3,9 +3,11 @@ import { setupListeners } from '@reduxjs/toolkit/query'
 import { charApi } from '../../features/chars/services/chars'
 import { classApi } from '../../features/classes/services/classes'
 import { templateApi } from '../../features/templates/services/templates'
+import charFormReducer from '../../features/chars/slices/charFormSlice'
 
 export const store = configureStore({
     reducer: {
+        charForm: charFormReducer,
         // Add the generated reducer as a specific top-level slice
         [charApi.reducerPath]: charApi.reducer,
         [classApi.reducerPath]: classApi.reducer,

@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
-import { Characteristic } from '../../../shared/types/characteristic'
+import { type Characteristic } from '../../../shared/types/characteristic'
 
-// Define a service using a base URL and expected endpoints
 export const charApi = createApi({
     reducerPath: 'charApi',
     baseQuery: axiosBaseQuery({
@@ -18,10 +18,10 @@ export const charApi = createApi({
                 method: 'GET',
             }),
             providesTags: (result) =>
-                result
+                result != null
                     ? [
                           ...result.map(
-                              ({ id }: any) => ({ type: 'Char', id } as const)
+                              ({ id }) => ({ type: 'Char', id } as const)
                           ),
                           { type: 'Char', id: 'LIST' },
                       ]
@@ -35,7 +35,7 @@ export const charApi = createApi({
             providesTags: (_result, _error, id) => [{ type: 'Char', id }],
         }),
         // Mutations
-        createChar: builder.mutation<Characteristic, any>({
+        createChar: builder.mutation<Characteristic, Characteristic>({
             query(body) {
                 return {
                     url: `characteristic/`,
@@ -47,7 +47,7 @@ export const charApi = createApi({
             },
             invalidatesTags: [{ type: 'Char', id: 'LIST' }],
         }),
-        updateChar: builder.mutation<Characteristic, any>({
+        updateChar: builder.mutation<Characteristic, Characteristic>({
             query(body) {
                 return {
                     url: `characteristic/`,
@@ -74,8 +74,6 @@ export const charApi = createApi({
     }),
 })
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
 export const {
     useGetCharsQuery,
     useGetCharByIdQuery,
