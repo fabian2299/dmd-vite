@@ -1,5 +1,5 @@
 import React from 'react'
-import { ErrorHandlerMap, ErrorTypeEnum } from '../shared/lib/errors'
+import { type ErrorHandlerMap, ErrorTypeEnum } from '../shared/lib/errors'
 
 import {
     useCreateTemplateMutation,
@@ -97,7 +97,7 @@ export function Templates() {
 
             {isError && <div>Error</div>}
 
-            {templates && templates.length > 0 && (
+            {templates != null && templates.length > 0 && (
                 <div className="mt-10">
                     <button
                         onClick={handleCreate}
@@ -116,9 +116,9 @@ export function Templates() {
 
                                 <div className="flex gap-4">
                                     <button
-                                        onClick={() =>
-                                            handleDelete(template.id)
-                                        }
+                                        onClick={async () => {
+                                            await handleDelete(template.id)
+                                        }}
                                         className="border-2 px-4 py-2 rounded-md"
                                     >
                                         {isDeletingMap[template.id]
@@ -127,7 +127,9 @@ export function Templates() {
                                     </button>
 
                                     <button
-                                        onClick={() => handleUpdate(template)}
+                                        onClick={async () => {
+                                            await handleUpdate(template)
+                                        }}
                                         className="border-2 px-4 py-2 rounded-md"
                                     >
                                         {isUpdatingMap[template.id]

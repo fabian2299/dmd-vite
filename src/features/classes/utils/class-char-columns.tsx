@@ -1,25 +1,27 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { Class } from '../../../shared/types/class'
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+import { type ColumnDef } from '@tanstack/react-table'
+import { type Characteristic } from '../../../shared/types/characteristic'
 import { Checkbox } from '../../../shared/components/ui/checkbox'
 import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
-import { ClassTableActions } from '../components/class-table/class-table-actions'
 
-export const classColumns: ColumnDef<Class>[] = [
+export const classCharColumns: Array<ColumnDef<Characteristic>> = [
     {
         id: 'select',
         header: ({ table }) => (
             <Checkbox
                 checked={table.getIsAllPageRowsSelected()}
-                onCheckedChange={(value) =>
+                onCheckedChange={(value) => {
                     table.toggleAllPageRowsSelected(!!value)
-                }
+                }}
                 aria-label="Select all"
             />
         ),
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                onCheckedChange={(value) => {
+                    row.toggleSelected(!!value)
+                }}
                 aria-label="Select row"
             />
         ),
@@ -39,24 +41,10 @@ export const classColumns: ColumnDef<Class>[] = [
         ),
     },
     {
-        accessorKey: 'characteristics',
+        accessorKey: 'type',
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Type" />
         ),
-        cell: ({ cell }) => {
-            const characteristics = cell.row.original.characteristics
-            const charNames = characteristics
-                .map((char) => char.name)
-                .join(', ')
-
-            return (
-                <span>
-                    {charNames.length > 50
-                        ? charNames.substring(0, 50) + '...'
-                        : charNames}
-                </span>
-            )
-        },
     },
 
     {
@@ -64,14 +52,5 @@ export const classColumns: ColumnDef<Class>[] = [
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="GoAigua Code" />
         ),
-    },
-    {
-        id: 'actions',
-        header: 'Actions',
-        cell: ({ cell }) => {
-            const classId = cell.row.original.id.toString()
-
-            return <ClassTableActions classId={classId} />
-        },
     },
 ]

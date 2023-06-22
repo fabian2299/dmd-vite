@@ -25,8 +25,6 @@ import {
     SelectValue,
 } from '../../../../shared/components/ui/select'
 import { Loader2 } from 'lucide-react'
-
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
     type ErrorHandlerMap,
@@ -34,6 +32,8 @@ import {
 } from '../../../../shared/lib/errors'
 import { useCreateCharMutation } from '../../services/chars'
 import {
+    type CreateCharDTO,
+    charFormSchema,
     resetCharDTO,
     selectCharDTO,
     setCharDTO,
@@ -46,17 +46,7 @@ import {
     TooltipTrigger,
 } from '../../../../shared/components/ui/tooltip'
 import { type AxiosError } from 'axios'
-
-export const charFormSchema = z.object({
-    name: z.string().min(3, 'Name must contain at least 3 chars').max(51),
-    description: z.string(),
-    shortDescription: z.string(),
-    type: z.nativeEnum(TypeValues),
-    id: z.number().optional(),
-})
-
-export type CreateCharDTO = Omit<z.infer<typeof charFormSchema>, 'id'>
-export type UpdateCharDTO = z.infer<typeof charFormSchema>
+import { cn } from '../../../../shared/utils/utils'
 
 export function CreateChar() {
     const [open, setOpen] = useState(false)
@@ -92,7 +82,7 @@ export function CreateChar() {
 
     useEffect(() => {
         if (!open) return
-        dispatch(setCharDTO(formValues))
+        dispatch(setCharDTO({ ...formValues, id: -1 }))
     }, [formValues, dispatch, open])
 
     useEffect(() => {
@@ -141,6 +131,30 @@ export function CreateChar() {
             })
         },
     }
+
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+
+    const isFormFull = useMemo(
+        () => name.length > 0 && type?.length > 0,
+        [name, type]
+    )
+
+    useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout>
+        if (isFormFull) {
+            setIsTooltipOpen(false)
+        } else {
+            if (open) {
+                timeoutId = setTimeout(() => {
+                    setIsTooltipOpen(true)
+                }, 200)
+            }
+        }
+        return () => {
+            clearTimeout(timeoutId)
+            setIsTooltipOpen(false)
+        }
+    }, [isFormFull, open])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -242,9 +256,31 @@ export function CreateChar() {
 
                         <div className="mt-auto text-end">
                             <TooltipProvider>
-                                <Tooltip>
+                                <Tooltip
+                                    open={isTooltipOpen && !isFormFull}
+                                    onOpenChange={(isOpen) => {
+                                        if (!isFormFull) {
+                                            setIsTooltipOpen(isOpen)
+                                        }
+                                    }}
+                                >
                                     <TooltipTrigger asChild>
-                                        <div className="inline-flex gap-4 items-center justify-end">
+                                        <div
+                                            className={cn(
+                                                !isFormFull ? 'opacity-50' : '',
+                                                'inline-flex gap-4 items-center justify-end'
+                                            )}
+                                            onMouseEnter={() => {
+                                                if (!isFormFull) {
+                                                    setIsTooltipOpen(true) // Open tooltip when hover starts and isFormFull is false.
+                                                }
+                                            }}
+                                            onMouseLeave={() => {
+                                                if (!isFormFull) {
+                                                    setIsTooltipOpen(false) // Close tooltip when hover ends and isFormFull is false.
+                                                }
+                                            }}
+                                        >
                                             <Button
                                                 type="submit"
                                                 disabled={isCreating}

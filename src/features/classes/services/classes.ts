@@ -1,8 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
-import { Class } from '../../../shared/types/class'
+import { type Class } from '../../../shared/types/class'
 
-// Define a service using a base URL and expected endpoints
 export const classApi = createApi({
     reducerPath: 'classApi',
     baseQuery: axiosBaseQuery({
@@ -18,10 +17,10 @@ export const classApi = createApi({
                 method: 'GET',
             }),
             providesTags: (result) =>
-                result
+                result != null
                     ? [
                           ...result.map(
-                              ({ id }: any) => ({ type: 'Class', id } as const)
+                              ({ id }) => ({ type: 'Class', id } as const)
                           ),
                           { type: 'Class', id: 'LIST' },
                       ]
@@ -36,7 +35,7 @@ export const classApi = createApi({
             providesTags: (_result, _error, id) => [{ type: 'Class', id }],
         }),
         // Mutations
-        createClass: builder.mutation<Class, any>({
+        createClass: builder.mutation<Class, Class>({
             query(body) {
                 return {
                     url: `class/`,
@@ -48,7 +47,7 @@ export const classApi = createApi({
             },
             invalidatesTags: [{ type: 'Class', id: 'LIST' }],
         }),
-        updateClass: builder.mutation<Class, any>({
+        updateClass: builder.mutation<Class, Class>({
             query(body) {
                 return {
                     url: `class/`,

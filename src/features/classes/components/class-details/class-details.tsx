@@ -5,10 +5,8 @@ import {
     TabsList,
     TabsTrigger,
 } from '../../../../shared/components/ui/tabs'
-import { CharDetailsMain } from './char-details-main'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type Characteristic } from '../../../../shared/types/characteristic'
 import { Form } from '../../../../shared/components/ui/form'
 import { toast } from '../../../../shared/components/ui/use-toast'
 import { useModalContext } from '../../../../shared/context/modal-context'
@@ -17,17 +15,8 @@ import {
     type ErrorHandlerMap,
     ErrorTypeEnum,
 } from '../../../../shared/lib/errors'
-import { useUpdateCharMutation } from '../../services/chars'
 import { Loader2 } from 'lucide-react'
-import { CharDetailsClasses } from './char-details-classes'
 import { useEffect, useMemo, useState } from 'react'
-import {
-    type UpdateCharDTO,
-    charFormSchema,
-    resetCharDTO,
-    selectCharDTO,
-    setCharDTO,
-} from '../../slices/charFormSlice'
 import { useAppDispatch, useAppSelector } from '../../../../shared/store/hooks'
 import {
     Tooltip,
@@ -37,60 +26,71 @@ import {
 } from '../../../../shared/components/ui/tooltip'
 import { type AxiosError } from 'axios'
 import { cn } from '../../../../shared/utils/utils'
+import { type Class } from '../../../../shared/types/class'
+import { useUpdateClassMutation } from '../../services/classes'
+import {
+    type UpdateClassDTO,
+    classFormSchema,
+    selectClassDTO,
+    resetClassDTO,
+    setClassDTO,
+} from '../../slices/classFormSlice'
+import { ClassDetailsMain } from './class-details-main'
+import { ClassDetailsChars } from './class-details-chars'
 
-interface CharDetailsProps {
-    char: Characteristic
+interface ClassDetailsProps {
+    classObj: Class
 }
 
-export function CharDetails({ char }: CharDetailsProps) {
+export function ClassDetails({ classObj }: ClassDetailsProps) {
     const { isModalOpen, closeModal } = useModalContext()
     const navigate = useNavigate()
 
-    const [updateChar, { isLoading: isUpdating }] = useUpdateCharMutation()
+    const [updateClass, { isLoading: isUpdating }] = useUpdateClassMutation()
 
-    const form = useForm<UpdateCharDTO>({
-        resolver: zodResolver(charFormSchema),
+    const form = useForm<UpdateClassDTO>({
+        resolver: zodResolver(classFormSchema),
         defaultValues: {
-            name: char.name,
-            type: char.type,
-            description: char.description,
-            shortDescription: char.shortDescription,
-            id: char.id,
+            charIds: classObj.characteristics.map((char) => char.id.toString()),
+            name: classObj.name,
+            description: classObj.description,
+            shortDescription: classObj.shortDescription,
+            id: classObj.id,
+            mainClass: classObj.isMainClass ?? false,
         },
     })
     const dispatch = useAppDispatch()
-    const charDTO = useAppSelector(selectCharDTO)
+    const classDTO = useAppSelector(selectClassDTO)
 
     const name = form.watch('name')
-    const type = form.watch('type')
     const description = form.watch('description')
     const shortDescription = form.watch('shortDescription')
     const id = form.watch('id')
+    const charIds = form.watch('charIds')
+    const mainClass = form.watch('mainClass')
 
     const formValues = useMemo(
         () => ({
             name,
-            type,
             description,
             shortDescription,
+            charIds,
             id,
+            mainClass,
         }),
-        [name, type, description, shortDescription, id]
+        [name, description, shortDescription, charIds, id, mainClass]
     )
 
     const onSubmit = async () => {
         try {
-            await updateChar({
-                ...char,
-                ...charDTO,
-            }).unwrap()
+            await updateClass(classDTO).unwrap()
             toast({
-                title: 'Char updated',
-                description: 'Char updated successfully',
+                title: 'Class updated',
+                description: 'Class updated successfully',
             })
             closeModal()
-            dispatch(resetCharDTO())
-            navigate('/resources/chars')
+            dispatch(resetClassDTO())
+            navigate('/resources/classes')
         } catch (error: unknown) {
             const errType = (error as AxiosError).name as ErrorTypeEnum
             errorHandler[errType]()
@@ -124,19 +124,19 @@ export function CharDetails({ char }: CharDetailsProps) {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 
     const isFormFull = useMemo(
-        () => name?.length > 0 && type?.length > 0,
-        [name, type]
+        () => name?.length > 0 && charIds?.length > 0,
+        [charIds?.length, name?.length]
     )
 
     useEffect(() => {
         if (isModalOpen) return
-        dispatch(resetCharDTO())
+        dispatch(resetClassDTO())
         form.reset()
     }, [dispatch, form, isModalOpen])
 
     useEffect(() => {
         if (!isModalOpen) return
-        dispatch(setCharDTO(formValues))
+        dispatch(setClassDTO(formValues))
     }, [formValues, dispatch, isModalOpen])
 
     useEffect(() => {
@@ -156,6 +156,8 @@ export function CharDetails({ char }: CharDetailsProps) {
         }
     }, [isFormFull, isModalOpen])
 
+    console.log('charIds', charIds)
+
     return (
         <Tabs
             defaultValue="general"
@@ -174,13 +176,11 @@ export function CharDetails({ char }: CharDetailsProps) {
                         className="flex h-full flex-col justify-between"
                     >
                         <TabsContent value="general">
-                            <CharDetailsMain form={form} />
+                            <ClassDetailsMain form={form} />
                         </TabsContent>
 
                         <TabsContent value="chars">
-                            <CharDetailsClasses
-                                data={char.classImplementations}
-                            />
+                            <ClassDetailsChars form={form} />
                         </TabsContent>
 
                         <div className="mt-auto text-end">
@@ -228,9 +228,9 @@ export function CharDetails({ char }: CharDetailsProps) {
                                         className="mr-6"
                                     >
                                         <p className="text-start text-lg w-full max-w-[220px]">
-                                            To create a char you must fill in
-                                            the required fields (*): Name and
-                                            Type
+                                            To create a class you must fill in
+                                            the required fields: Name and Select
+                                            at least one characteristic
                                         </p>
                                     </TooltipContent>
                                 </Tooltip>

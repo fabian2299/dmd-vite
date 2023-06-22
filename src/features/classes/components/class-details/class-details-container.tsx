@@ -1,29 +1,29 @@
 import { useNavigate } from 'react-router-dom'
 import { useModalContext } from '../../../../shared/context/modal-context'
-import { useGetCharByIdQuery } from '../../services/chars'
-import { CharDetails } from './char-details'
 import { Loader2 } from 'lucide-react'
 import { toast } from '../../../../shared/components/ui/use-toast'
 import { useEffect } from 'react'
+import { useGetClassByIdQuery } from '../../services/classes'
+import { ClassDetails } from './class-details'
 
-export function CharDetailsContainer({ charId }: { charId: string }) {
+export function ClassDetailsContainer({ classId }: { classId: string }) {
     const { closeModal, isModalOpen } = useModalContext()
     const navigate = useNavigate()
 
-    const { data: char, isLoading } = useGetCharByIdQuery(charId, {
+    const { data: classObj, isLoading } = useGetClassByIdQuery(classId, {
         skip: !isModalOpen,
     })
 
     useEffect(() => {
-        if (char == null && isModalOpen && !isLoading) {
+        if (classObj == null && isModalOpen && !isLoading) {
             closeModal()
             toast({
-                title: 'Char not found',
+                title: 'Class not found',
                 variant: 'destructive',
             })
-            navigate('/resources/chars')
+            navigate('/resources/classes')
         }
-    }, [char, isModalOpen, closeModal, navigate, isLoading])
+    }, [classObj, isModalOpen, closeModal, navigate, isLoading])
 
     if (isLoading) {
         return (
@@ -33,7 +33,7 @@ export function CharDetailsContainer({ charId }: { charId: string }) {
         )
     }
 
-    if (char == null) return null
+    if (classObj == null) return null
 
-    return <CharDetails char={char} />
+    return <ClassDetails classObj={classObj} />
 }

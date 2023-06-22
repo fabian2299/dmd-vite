@@ -13,8 +13,12 @@ import {
 import { Button, buttonVariants } from '../../../../shared/components/ui/button'
 import { useDeleteCharMutation } from '../../services/chars'
 import { useState } from 'react'
-import { ErrorHandlerMap, ErrorTypeEnum } from '../../../../shared/lib/errors'
+import {
+    type ErrorHandlerMap,
+    ErrorTypeEnum,
+} from '../../../../shared/lib/errors'
 import { toast } from '../../../../shared/components/ui/use-toast'
+import { type AxiosError } from 'axios'
 
 export function DeleteChar({ charId }: { charId: string }) {
     const [deleteChar, { isLoading: isDeleting }] = useDeleteCharMutation()
@@ -27,8 +31,8 @@ export function DeleteChar({ charId }: { charId: string }) {
                 title: `Char deleted`,
                 description: 'Char deleted successfully',
             })
-        } catch (error: any) {
-            const errType = error.name as ErrorTypeEnum
+        } catch (error: unknown) {
+            const errType = (error as AxiosError).name as ErrorTypeEnum
             errorHandler[errType]()
         } finally {
             setOpen(false)
@@ -85,9 +89,9 @@ export function DeleteChar({ charId }: { charId: string }) {
                         className={buttonVariants({ variant: 'destructive' })}
                     >
                         <Button
-                            onClick={(e) => {
+                            onClick={async (e) => {
                                 e.preventDefault()
-                                handleDelete(charId)
+                                await handleDelete(charId)
                             }}
                             disabled={isDeleting}
                             className={'disabled:opacity-80'}

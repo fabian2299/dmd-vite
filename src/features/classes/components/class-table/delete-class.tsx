@@ -1,4 +1,4 @@
-import { Trash } from 'lucide-react'
+import { Loader2, Trash } from 'lucide-react'
 import {
     AlertDialog,
     AlertDialogAction,
@@ -9,11 +9,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from '../../../shared/components/ui/alert-dialog'
+} from '../../../../shared/components/ui/alert-dialog'
 
-import { Button } from '../../../shared/components/ui/button'
+import { Button, buttonVariants } from '../../../../shared/components/ui/button'
 import { useState } from 'react'
-import { useDeleteClassMutation } from '../services/classes'
+import { useDeleteClassMutation } from '../../services/classes'
+import { toast } from '../../../../shared/components/ui/use-toast'
 
 export function DeleteClass({ classId }: { classId: string }) {
     const [deleteClass, { isLoading: isDeleting }] = useDeleteClassMutation()
@@ -22,6 +23,10 @@ export function DeleteClass({ classId }: { classId: string }) {
     const handleDelete = async (id: string) => {
         try {
             await deleteClass(id).unwrap()
+            toast({
+                title: `Class deleted`,
+                description: 'Class deleted successfully',
+            })
         } catch (error) {
             console.log(error)
         } finally {
@@ -48,15 +53,29 @@ export function DeleteClass({ classId }: { classId: string }) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction asChild>
+                    <AlertDialogAction
+                        asChild
+                        className={buttonVariants({ variant: 'destructive' })}
+                    >
                         <Button
-                            variant={'destructive'}
-                            onClick={(e) => {
+                            onClick={async (e) => {
                                 e.preventDefault()
-                                handleDelete(classId)
+                                await handleDelete(classId)
                             }}
+                            disabled={isDeleting}
+                            className={'disabled:opacity-80'}
                         >
-                            {isDeleting ? 'Deleting...' : 'Delete'}
+                            {isDeleting ? (
+                                <div className="flex gap-2 items-center">
+                                    <p>Deleting</p>
+                                    <Loader2
+                                        className="animate-spin text-white"
+                                        size={20}
+                                    />
+                                </div>
+                            ) : (
+                                'Delete'
+                            )}
                         </Button>
                     </AlertDialogAction>
                 </AlertDialogFooter>

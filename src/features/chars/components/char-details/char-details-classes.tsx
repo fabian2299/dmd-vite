@@ -2,6 +2,7 @@ import { DataTable } from '../../../../shared/components/table/data-table'
 import { DataTablePagination } from '../../../../shared/components/table/data-table-pagination'
 import { DataTableViewOptions } from '../../../../shared/components/table/data-table-view-options'
 import { Input } from '../../../../shared/components/ui/input'
+import { ScrollArea } from '../../../../shared/components/ui/scroll-area'
 import { useDataTable } from '../../../../shared/hooks/use-data-table'
 import { type ClassImplementation } from '../../../../shared/types/characteristic'
 import { charClassColumns } from '../../utils/char-classes-columns'
@@ -29,9 +30,9 @@ export function CharDetailsClasses({ data }: { data: ClassImplementation[] }) {
                 </div>
             </div>
 
-            <div className="max-h-[780px] overflow-y-auto ">
+            <ScrollArea className="h-[600px]">
                 <DataTable table={table} columns={charClassColumns} />
-            </div>
+            </ScrollArea>
 
             <DataTablePagination table={table} />
         </div>

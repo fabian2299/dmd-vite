@@ -1,40 +1,42 @@
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { type Class } from '../../../../shared/types/class'
+import { useModalContext } from '../../../../shared/context/modal-context'
+import { useCallback, useEffect } from 'react'
+import { Input } from '../../../../shared/components/ui/input'
+import { CreateClass } from '../create-class/create-class'
+import { DataTableViewOptions } from '../../../../shared/components/table/data-table-view-options'
+import { ScrollArea } from '../../../../shared/components/ui/scroll-area'
 import { DataTable } from '../../../../shared/components/table/data-table'
 import { DataTablePagination } from '../../../../shared/components/table/data-table-pagination'
-import { DataTableViewOptions } from '../../../../shared/components/table/data-table-view-options'
-import { Input } from '../../../../shared/components/ui/input'
-import { useDataTable } from '../../../../shared/hooks/use-data-table'
-import { type Characteristic } from '../../../../shared/types/characteristic'
-import { charColumns } from '../../utils/char-columns'
-import { CreateChar } from '../create-char/create-char'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useModalContext } from '../../../../shared/context/modal-context'
-import { Dialog, DialogContent } from '../../../../shared/components/ui/dialog'
-import { useCallback, useEffect } from 'react'
-import { CharDetailsContainer } from '../char-details/char-details-container'
 import { Loader2 } from 'lucide-react'
-import { ScrollArea } from '../../../../shared/components/ui/scroll-area'
+import { Dialog, DialogContent } from '../../../../shared/components/ui/dialog'
+import { classColumns } from '../../utils/class-columns'
+import { useDataTable } from '../../../../shared/hooks/use-data-table'
+import { ClassDetailsContainer } from '../class-details/class-details-container'
 
-export function CharTable({
+export function ClassTable({
     data,
     isFetching,
 }: {
-    data: Characteristic[]
+    data: Class[]
     isFetching: boolean
 }) {
     // outside state/functions
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
-    const { globalFilter, setGlobalFilter, table } =
-        useDataTable<Characteristic>({ data, columns: charColumns })
+    const { globalFilter, setGlobalFilter, table } = useDataTable<Class>({
+        data,
+        columns: classColumns,
+    })
     const { isModalOpen, closeModal, openModal } = useModalContext()
 
     // inside state/functions
-    const urlCharId = searchParams.get('charId') ?? ''
+    const urlClassId = searchParams.get('classId') ?? ''
 
     const handleChange = useCallback(
         (open: boolean) => {
             if (!open) {
-                navigate(`/resources/chars`)
+                navigate(`/resources/classes`)
                 closeModal()
                 return
             }
@@ -44,10 +46,10 @@ export function CharTable({
     )
 
     useEffect(() => {
-        if (urlCharId.length > 0) {
+        if (urlClassId.length > 0) {
             handleChange(true)
         }
-    }, [handleChange, urlCharId])
+    }, [handleChange, urlClassId])
 
     return (
         <>
@@ -65,14 +67,14 @@ export function CharTable({
                         className="w-96"
                     />
                     <div className="flex items-center gap-4">
-                        <CreateChar />
+                        <CreateClass />
 
                         <DataTableViewOptions table={table} />
                     </div>
                 </div>
 
                 <ScrollArea className="h-[780px] relative">
-                    <DataTable table={table} columns={charColumns} />
+                    <DataTable table={table} columns={classColumns} />
 
                     {isFetching && (
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -86,7 +88,7 @@ export function CharTable({
 
             <Dialog open={isModalOpen} onOpenChange={handleChange}>
                 <DialogContent className="lg:max-w-5xl min-h-[70vh]">
-                    <CharDetailsContainer charId={urlCharId} />
+                    <ClassDetailsContainer classId={urlClassId} />
                 </DialogContent>
             </Dialog>
         </>
