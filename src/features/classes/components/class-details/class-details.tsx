@@ -37,6 +37,7 @@ import {
 } from '../../slices/classFormSlice'
 import { ClassDetailsMain } from './class-details-main'
 import { ClassDetailsChars } from './class-details-chars'
+import { usePrefetch } from '../../../chars/services/chars'
 
 interface ClassDetailsProps {
     classObj: Class
@@ -47,6 +48,7 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
     const navigate = useNavigate()
 
     const [updateClass, { isLoading: isUpdating }] = useUpdateClassMutation()
+    const prefetchChars = usePrefetch('getChars')
 
     const form = useForm<UpdateClassDTO>({
         resolver: zodResolver(classFormSchema),
@@ -156,8 +158,6 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
         }
     }, [isFormFull, isModalOpen])
 
-    console.log('charIds', charIds)
-
     return (
         <Tabs
             defaultValue="general"
@@ -165,7 +165,14 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
         >
             <TabsList className="grid w-1/3 grid-cols-2">
                 <TabsTrigger value="general">General</TabsTrigger>
-                <TabsTrigger value="chars">Classes</TabsTrigger>
+                <TabsTrigger
+                    value="chars"
+                    onMouseEnter={() => {
+                        prefetchChars()
+                    }}
+                >
+                    Chars
+                </TabsTrigger>
             </TabsList>
 
             <div className="h-full">

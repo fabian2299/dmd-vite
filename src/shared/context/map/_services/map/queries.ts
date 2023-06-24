@@ -1,0 +1,31 @@
+import axios from 'axios'
+import { Template } from '../../../../types/template'
+
+const baseUrl =
+    'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/portal/layers/assigned/'
+
+const token =
+    'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJPVi1uMm9RSER2SHhuZW4zTi01WVYybnd2eTVUTV9MNjZNVEpTdVhaRHowIn0.eyJleHAiOjE2ODY5MDcwOTIsImlhdCI6MTY4NjA0MzA5NCwiYXV0aF90aW1lIjoxNjg2MDQzMDkyLCJqdGkiOiI2ZGY4NjVkMC0zYTgwLTQ4NmUtYmJjYS02MTkwYTM0M2QyYTAiLCJpc3MiOiJodHRwczovL2tleWNsb2FrLXByZS5kZXYuaWRyaWNhLnByby9hdXRoL3JlYWxtcy9Hb2FpZ3VhUHJlIiwiYXVkIjpbInJlYWxtLW1hbmFnZW1lbnQiLCJhY2NvdW50Il0sInN1YiI6ImU2MDJiZWE5LTlkYjktNDU3Yy1hMDRkLTU1M2I1Yzc0ZTJjOCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImdvLWFpZ3VhLWRtZCIsIm5vbmNlIjoiYjM0NjgzNTItZWE1OS00ZjdhLTkyYWUtZGMyMjhlZWZlM2QxIiwic2Vzc2lvbl9zdGF0ZSI6ImVkMjk5MWMzLTQxYjAtNGY0ZS04Yzk0LTgzYTc2YzIzMDVkNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJtYW5hZ2UtcmVhbG0iLCJtYW5hZ2UtdXNlcnMiLCJxdWVyeS1yZWFsbXMiLCJtYW5hZ2UtY2xpZW50cyIsInF1ZXJ5LWNsaWVudHMiLCJxdWVyeS1ncm91cHMiLCJxdWVyeS11c2VycyJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19LCJnby1haWd1YS1kbWQiOnsicm9sZXMiOlsiRE1EX0FQUExJQ0FUSU9OX01PRFVMRSIsIkRNRF9XUklURV9DSEFSQUNURVJJU1RJQyIsIkRNRF9XUklURV9URU1QTEFURSIsIkRNRF9ST0xFU19NT0RVTEUiLCJETURfV1JJVEVfSElFUkFSQ0hZX0lURU0iLCJETURfV1JJVEVfQVBJIiwiRE1EX1dSSVRFX0hJRVJBUkNIWSIsIkRNRF9BU1NFVF9NT0RVTEUiLCJETURfQURNSU4iLCJETURfUkVUUklFVkVfSElFUkFSQ0hZX0lURU0iLCJETURfVVNFUl9BRE1JTiIsIkRNRF9ET0NVTUVOVEFUSU9OX01PRFVMRSIsIkRNRF9XUklURV9BU1NFVCIsIkRNRF9SRUFEX0VYVEVSTkFMX0FQUExJQ0FUSU9OIiwiRE1EX1dSSVRFX0NMQVNTIiwiRE1EX1JFQURfQVNTRVQiLCJBUFBfRE1EIiwiRE1EX1JFQURfQVBJIiwiRE1EX0hJRVJBUkNIWV9NT0RVTEUiLCJETURfUkVBRF9ISUVSQVJDSFkiLCJETURfUkVBRF9URU1QTEFURSIsIkRNRF9XUklURV9NRUFTVVJFTUVOVCIsIkRNRF9XUklURV9FWFRFUk5BTF9BUFBMSUNBVElPTiIsIkRNRF9VTklUX01PRFVMRSJdfX0sInNjb3BlIjoib3BlbmlkIGdvYWlndWEgcHJvZmlsZSBlbWFpbCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJ1c2VyX25hbWUiOiJmYW5pdmkiLCJuYW1lIjoiRkFCSUFOIEFMRUpBTkRSTyBOSUVWRVMgVklaQ0FJTk8iLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJmYW5pdmkiLCJsb2NhbGUiOiJlbiIsImdpdmVuX25hbWUiOiJGQUJJQU4gQUxFSkFORFJPIiwiZmFtaWx5X25hbWUiOiJOSUVWRVMgVklaQ0FJTk8iLCJlbWFpbCI6ImYubmlldmVzQGNsZXZlcnB5LmNvbSJ9.DOiIs97p5rok0rP3zK4MB_XQjTUbrIdTiURAzT4OAd_IOdpBqhah-mER2Ncb04qtdoeujAMIPN-Tgz9gmV2ooq9GtqE5nSiQNVWfhmexQq6av5ByBCTEb3rN9yQyK3ZzfxuYfr3bSAoBL1m3D4xQjIjHmqBxS9tIbIX6zzIVH2KLUZZB8l0z3r4-R4m5ucqAElJxG5oRzEhCvZgMDJRnzOQyryVvZsW5bYnQtazQrdFU6KF2TMnrqvS9sp972XiOlcjelDEg0BJ-zPxWBCBGGz6338hVIxkdANJ2AHaHzgpu7ulGLmb_76UTmrD9NEKCaCHIN3XTs3_HcwVaGHsJJw'
+
+export async function getAssignedLayersFromPortal() {
+    const { data } = await axios(baseUrl, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+
+    return data as GOLayer[]
+}
+
+const baseUrlTemplates =
+    'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/template/'
+
+export async function findTemplatesForView() {
+    const { data } = await axios(`${baseUrlTemplates}template-view`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+
+    return data as Template[]
+}

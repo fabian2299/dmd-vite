@@ -1,9 +1,9 @@
 import React from 'react'
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
+    type ColumnDef,
+    type ColumnFiltersState,
+    type SortingState,
+    type VisibilityState,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
@@ -14,7 +14,7 @@ import { fuzzyFilter } from '../utils/utils'
 
 interface DataTableProps<T> {
     data: T[]
-    columns: ColumnDef<T, any>[]
+    columns: Array<ColumnDef<T, any>>
 }
 
 export function useDataTable<T>({ data, columns }: DataTableProps<T>) {
@@ -65,7 +65,7 @@ export function useDataTable<T>({ data, columns }: DataTableProps<T>) {
 
 interface AssetDataTableProps<T> {
     data: T[]
-    columns: ColumnDef<T, any>[]
+    columns: Array<ColumnDef<T, any>>
     setPagination: any
     pageIndex: number
     pageSize: number
@@ -75,7 +75,6 @@ interface AssetDataTableProps<T> {
 export function useAssetDataTable<T>({
     data,
     columns,
-
     setPagination,
     pageIndex,
     pageSize,

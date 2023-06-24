@@ -1,7 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
-import { Characteristic } from '../../../shared/types/characteristic'
-import { Template } from '../../../shared/types/template'
+import { type Template } from '../../../shared/types/template'
 
 export const templateApi = createApi({
     reducerPath: 'templateApi',
@@ -18,18 +17,24 @@ export const templateApi = createApi({
                 method: 'GET',
             }),
             providesTags: (result) =>
-                result
+                result != null
                     ? [
                           ...result.map(
-                              ({ id }: any) =>
-                                  ({ type: 'Template', id } as const)
+                              ({ id }) => ({ type: 'Template', id } as const)
                           ),
                           { type: 'Template', id: 'LIST' },
                       ]
                     : [{ type: 'Template', id: 'LIST' }],
         }),
+        getTemplateById: builder.query<Template, string>({
+            query: (id) => ({
+                url: `template/${id}`,
+                method: 'GET',
+            }),
+            providesTags: (_result, _error, id) => [{ type: 'Template', id }],
+        }),
         // Mutations
-        createTemplate: builder.mutation<Characteristic, any>({
+        createTemplate: builder.mutation<Template, Template>({
             query(body) {
                 return {
                     url: `template/`,
@@ -41,7 +46,7 @@ export const templateApi = createApi({
             },
             invalidatesTags: [{ type: 'Template', id: 'LIST' }],
         }),
-        updateTemplate: builder.mutation<Characteristic, any>({
+        updateTemplate: builder.mutation<Template, Template>({
             query(body) {
                 return {
                     url: `template/`,
@@ -56,7 +61,7 @@ export const templateApi = createApi({
                 { type: 'Template', id: 'LIST' },
             ],
         }),
-        deleteTemplate: builder.mutation<void, number>({
+        deleteTemplate: builder.mutation<void, string>({
             query(id) {
                 return {
                     url: `template/${id}`,
@@ -65,6 +70,30 @@ export const templateApi = createApi({
             },
             invalidatesTags: [{ type: 'Template', id: 'LIST' }],
         }),
+        publishLayer: builder.mutation<void, string>({
+            query(id) {
+                return {
+                    url: `geoserver/layer/${id}`,
+                    method: 'POST',
+                }
+            },
+            invalidatesTags: (_result, _error, arg) => [
+                { type: 'Template', id: arg },
+                { type: 'Template', id: 'LIST' },
+            ],
+        }),
+        unpublishLayer: builder.mutation<void, string>({
+            query(id) {
+                return {
+                    url: `geoserver/layer/${id}`,
+                    method: 'DELETE',
+                }
+            },
+            invalidatesTags: (_result, _error, arg) => [
+                { type: 'Template', id: arg },
+                { type: 'Template', id: 'LIST' },
+            ],
+        }),
     }),
 })
 
@@ -72,7 +101,11 @@ export const templateApi = createApi({
 // auto-generated based on the defined endpoints
 export const {
     useGetTemplatesQuery,
+    useGetTemplateByIdQuery,
+    usePrefetch,
     useCreateTemplateMutation,
     useUpdateTemplateMutation,
     useDeleteTemplateMutation,
+    usePublishLayerMutation,
+    useUnpublishLayerMutation,
 } = templateApi

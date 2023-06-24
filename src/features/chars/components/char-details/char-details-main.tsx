@@ -1,5 +1,4 @@
 import { type UseFormReturn } from 'react-hook-form'
-import { type UpdateCharDTO } from '../create-char/create-char'
 import {
     FormControl,
     FormField,
@@ -16,6 +15,7 @@ import {
     SelectValue,
 } from '../../../../shared/components/ui/select'
 import { TypeValues } from '../../../../shared/types/characteristic'
+import { type UpdateCharDTO } from '../../slices/charFormSlice'
 
 interface CharDetailsMainProps {
     form: UseFormReturn<UpdateCharDTO, unknown, undefined>

@@ -50,8 +50,8 @@ export const classFormSlice = createSlice({
             state.classDTO = {
                 ...state.classDTO,
                 ...rest,
-                isMainClass: action.payload.mainClass,
-                characteristics: action.payload.charIds.map((id) => ({
+                isMainClass: mainClass,
+                characteristics: charIds.map((id) => ({
                     id: parseInt(id),
                 })),
             }

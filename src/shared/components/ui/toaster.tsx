@@ -1,6 +1,4 @@
-'use client'
-
-import { useToast } from './use-toast'
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import {
     Toast,
     ToastClose,
@@ -9,6 +7,7 @@ import {
     ToastTitle,
     ToastViewport,
 } from './toast'
+import { useToast } from './use-toast'
 
 export function Toaster() {
     const { toasts } = useToast()
