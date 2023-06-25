@@ -11,14 +11,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <Provider store={store}>
             <ModalProvider>
-                <MapProvider>
-                    <AsideMenuProvider>
-                        <MainHierarchyItemsFilterProvider>
+                <MainHierarchyItemsFilterProvider>
+                    <MapProvider>
+                        <AsideMenuProvider>
                             {children}
                             <Toaster />
-                        </MainHierarchyItemsFilterProvider>
-                    </AsideMenuProvider>
-                </MapProvider>
+                        </AsideMenuProvider>
+                    </MapProvider>
+                </MainHierarchyItemsFilterProvider>
             </ModalProvider>
         </Provider>
     )

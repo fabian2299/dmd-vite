@@ -98,82 +98,92 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [isLoading, setIsLoading] = useState(false)
 
+    const isGeneratingMapRef = useRef(false)
+
     const generateMap = useCallback(async () => {
+        if (isGeneratingMapRef.current) return
+        isGeneratingMapRef.current = true
         setIsLoading(true)
-        // Generate layers from templates
-        const mapLayers = await getLayers()
-        const allTemplatesResponse = await findTemplatesForView()
+        try {
+            const mapLayers = await getLayers()
+            const allTemplatesResponse = await findTemplatesForView()
 
-        if (mapLayers == null || allTemplatesResponse == null) return
+            if (mapLayers == null || allTemplatesResponse == null) return
 
-        setTemplateList(
-            allTemplatesResponse.filter(
-                (template: Template) => template.layerName
+            setTemplateList(
+                allTemplatesResponse.filter(
+                    (template: Template) => template.layerName
+                )
             )
-        )
 
-        // Prepare map configuration
-        const config: any = {
-            GOMapOptions: [
-                {
-                    id: MAP_ID,
-                    div: 'asset-map',
-                    optionView: {
-                        id: 'vista1',
-                        center: [-42010.86, 4789184.35],
-                        zoom: 12,
-                        projection: '3857',
-                    },
-                    filter: '',
-                    bbox: false,
-                    optionToc: {
-                        id: TOC_ID,
-                        lang: languages.EN,
-                        active: true,
-                        position_x: position_x.RIGHT,
-                        position_y: position_y.TOP,
-                        legend: true,
-                        max_height: 500,
-                        margin_lateral: 0,
-                        no_switcher: [
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const config: any = {
+                GOMapOptions: [
+                    {
+                        id: MAP_ID,
+                        div: 'asset-map',
+                        optionView: {
+                            id: 'vista1',
+                            center: [-42010.86, 4789184.35],
+                            zoom: 12,
+                            projection: '3857',
+                        },
+                        filter: '',
+                        bbox: false,
+                        optionToc: {
+                            id: TOC_ID,
+                            lang: languages.EN,
+                            active: true,
+                            position_x: position_x.RIGHT,
+                            position_y: position_y.TOP,
+                            legend: true,
+                            max_height: 500,
+                            margin_lateral: 0,
+                            no_switcher: [
+                                {
+                                    folder: `Base Layers/`,
+                                    unique_active: true,
+                                },
+                            ],
+                        },
+                        layer: [
                             {
-                                folder: `Base Layers/`,
-                                unique_active: true,
+                                id: 'DarkTheme',
+                                alias: 'Base',
+                                layerType: 'GO_MAPBOX',
+                                isBaseLayer: true,
+                                urlFolder: `Base Layers/`,
+                                style: 'ckugiqlos8tem17mpk9ne2oxd',
+                                token: 'pk.eyJ1IjoiaWRyaWNhIiwiYSI6ImNrdWZpNHAwOTFlOHcycm10ZWlvcTJodTkifQ.kDBecIZHGx-7nf807n2xIQ',
+                                epsg: 4326,
+                                filter: '',
+                                srs: 'EPSG:3857',
+                                bbox: false,
                             },
+                            ...mapLayers,
                         ],
                     },
-                    layer: [
-                        {
-                            id: 'DarkTheme',
-                            alias: 'Base',
-                            layerType: 'GO_MAPBOX',
-                            isBaseLayer: true,
-                            urlFolder: `Base Layers/`,
-                            style: 'ckugiqlos8tem17mpk9ne2oxd',
-                            token: 'pk.eyJ1IjoiaWRyaWNhIiwiYSI6ImNrdWZpNHAwOTFlOHcycm10ZWlvcTJodTkifQ.kDBecIZHGx-7nf807n2xIQ',
-                            epsg: 4326,
-                            filter: '',
-                            srs: 'EPSG:3857',
-                            bbox: false,
-                        },
-                        ...mapLayers,
-                    ],
-                },
-            ],
+                ],
+            }
+
+            GoMapLoader.AddToken('')
+
+            // Load the GoMap with the provided configuration
+            const goMap = await GoMapLoader.loadGoMap(
+                config,
+                'https://gateway-proxy.dev.idrica.pro/',
+                GO_CONFIG.REGION_ENVIROMENTS.EUROPE
+            )
+
+            if (goMap == null) throw new Error('GoMap is null')
+
+            setAssetMap(goMap)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
+            isGeneratingMapRef.current = false
         }
-
-        GoMapLoader.AddToken('')
-
-        // Load the GoMap with the provided configuration
-        const goMap = await GoMapLoader.loadGoMap(
-            config,
-            'https://gateway-proxy.dev.idrica.pro/',
-            GO_CONFIG.REGION_ENVIROMENTS.EUROPE
-        )
-
-        // Set the assetMap state
-        setIsLoading(false)
-        setAssetMap(goMap)
     }, [])
 
     const objectTemplateSearch = ''
@@ -184,6 +194,7 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         (layers: Map<string, GOLayer>) => {
             const buildFilters = () => {
                 const filter: string[] = []
+                console.log('selectedHierarchyItems', selectedHierarchyItems)
 
                 // Apply template filter
                 if (objectTemplateSearch.length > 0) {
@@ -199,7 +210,7 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
                 }
 
                 // Apply main hierarchy filter
-                if (selectedHierarchyItems.length > 0) {
+                if (selectedHierarchyItems?.length > 0) {
                     filter.push(
                         `main_hierarchy_parent_id IN (${selectedHierarchyItems.join(
                             ', '
@@ -209,8 +220,8 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
 
                 // Apply object name and description filters
                 if (
-                    (objectNameSearch.length > 0 || objectDescriptionSearch) !==
-                    ''
+                    objectNameSearch.length > 0 ||
+                    objectDescriptionSearch.length > 0
                 ) {
                     filter.push(
                         `name ilike '%${objectNameSearch}%' AND short_description ilike '%${objectDescriptionSearch}%'`
@@ -221,6 +232,8 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             }
 
             const filterString = buildFilters()
+
+            console.log('filterString', filterString)
 
             layers.forEach((layer) => {
                 const alias = layer?.getAlias()
@@ -556,6 +569,7 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             handlePointerSelection,
             setIsCollapsed,
             extractFeatures,
+            setAssetMap,
         }),
         [
             selectedAssetsMap,

@@ -38,6 +38,7 @@ interface MapContextProps {
         type: 'add' | 'remove',
         features: Map<number, FeatureLike>
     ) => void
+    setAssetMap: React.Dispatch<React.SetStateAction<GOMap | undefined>>
     setIsOpenIntersectForm: React.Dispatch<React.SetStateAction<boolean>>
     setIsOpenIntersectByAssetForm: React.Dispatch<React.SetStateAction<boolean>>
     setRowAsset: React.Dispatch<React.SetStateAction<any>>

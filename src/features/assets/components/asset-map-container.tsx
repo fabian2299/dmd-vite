@@ -9,12 +9,23 @@ export function AssetMapContainer() {
 }
 
 const AssetMapLoaded = () => {
-    const { MAP_ID, TOC_ID, isTocDisplayed, isLoading, generateMap, assetMap } =
-        useMapContext()
+    const {
+        MAP_ID,
+        TOC_ID,
+        isTocDisplayed,
+        isLoading,
+        generateMap,
+        assetMap,
+        setAssetMap,
+    } = useMapContext()
 
     useEffect(() => {
         generateMap()
-    }, [generateMap])
+
+        return () => {
+            setAssetMap(undefined)
+        }
+    }, [generateMap, setAssetMap])
 
     useEffect(() => {
         if (assetMap == null) return
@@ -30,8 +41,6 @@ const AssetMapLoaded = () => {
             )
         }
     }, [MAP_ID, assetMap])
-
-    console.log('assetMap', assetMap)
 
     return (
         <div>

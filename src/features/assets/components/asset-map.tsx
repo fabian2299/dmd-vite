@@ -8,6 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type MapBrowserEvent } from 'ol'
 import { useMapContext } from '../../../shared/context/map/map-context'
 import { type GOMap } from '@goaigua/go-gisapi'
+import { Button } from '../../../shared/components/ui/button'
 
 export function AssetMap({ assetMap }: { assetMap: GOMap }) {
     const {
@@ -167,95 +168,112 @@ export function AssetMap({ assetMap }: { assetMap: GOMap }) {
                 {/* <AssetMapModal /> */}
             </div>
 
-            <div className="flex gap-2 absolute top-4 z-20">
-                <div className="c-asset-map__selection-group">
-                    <div
-                        className={
-                            'c-asset-map__selection-button --drag c-asset-map__control-button ' +
-                            setSelectorAsActive('drag')
-                        }
-                        onClick={() => {
-                            setCurrentSelectorId('drag')
-                        }}
-                    />
-                    <div
-                        onClick={() => {
-                            setCurrentSelectorId('intersect')
-                            setIsIntersectOpenMenu(!isIntersectOpenMenu)
-                        }}
-                        className={
-                            'c-asset-map__selection-button --intersect c-asset-map__control-button ' +
-                            setSelectorAsActive('intersect')
-                        }
-                    >
-                        {isIntersectOpenMenu && (
-                            <button
-                                onClick={() => {
-                                    setIsOpenIntersectForm(true)
-                                }}
-                                className="button-layer-options"
-                            >
-                                Title
-                            </button>
-                        )}
-                    </div>
+            <div className="flex gap-2 absolute top-4 z-20 justify-end w-full px-4">
+                <Button
+                    className={
+                        'c-asset-map__selection-button --drag c-asset-map__control-button ' +
+                        setSelectorAsActive('drag')
+                    }
+                    onClick={() => {
+                        setCurrentSelectorId('drag')
+                    }}
+                >
+                    Drag
+                </Button>
+                <Button
+                    onClick={() => {
+                        setCurrentSelectorId('intersect')
+                        setIsIntersectOpenMenu(!isIntersectOpenMenu)
+                    }}
+                    className={
+                        'c-asset-map__selection-button --intersect c-asset-map__control-button ' +
+                        setSelectorAsActive('intersect')
+                    }
+                >
+                    Intersect
+                    {isIntersectOpenMenu && (
+                        <button
+                            onClick={() => {
+                                setIsOpenIntersectForm(true)
+                            }}
+                            className="button-layer-options"
+                        >
+                            Title
+                        </button>
+                    )}
+                </Button>
 
-                    <div
-                        className={
-                            'c-asset-map__selection-button --click c-asset-map__control-button ' +
-                            setSelectorAsActive('click')
-                        }
-                        onClick={() => {
-                            setCurrentSelectorId('click')
-                        }}
-                    />
-                    <div
-                        className={
-                            'c-asset-map__selection-button --polygon c-asset-map__control-button ' +
-                            setSelectorAsActive('polygon')
-                        }
-                        onClick={() => {
-                            setCurrentSelectorId('polygon')
-                        }}
-                    />
-                    <div
-                        className={
-                            'c-asset-map__selection-button --unselect c-asset-map__control-button ' +
-                            (selectedAssetsMap.size === 0 ? '--disabled' : '')
-                        }
-                        onClick={() => {
-                            selectedAssetsMap.size > 0 &&
-                                handleRemoveSelection()
-                        }}
-                    />
-                    <div
-                        className={
-                            'c-asset-map__selection-button --undo c-asset-map__control-button ' +
-                            (operationCursor > -1 &&
-                            operationCursor < operationList.size
-                                ? ''
-                                : '--disabled')
-                        }
-                        onClick={handleUndo}
-                    />
-                    <div
-                        className={
-                            'c-asset-map__selection-button --redo c-asset-map__control-button ' +
-                            (operationCursor < operationList.size - 1 &&
-                            operationList.size > -1
-                                ? ''
-                                : '--disabled')
-                        }
-                        onClick={handleRedo}
-                    />
-                </div>
-                <div
+                <Button
+                    className={
+                        'c-asset-map__selection-button --click c-asset-map__control-button ' +
+                        setSelectorAsActive('click')
+                    }
+                    onClick={() => {
+                        setCurrentSelectorId('click')
+                    }}
+                >
+                    Select
+                </Button>
+
+                <Button
+                    className={
+                        'c-asset-map__selection-button --polygon c-asset-map__control-button ' +
+                        setSelectorAsActive('polygon')
+                    }
+                    onClick={() => {
+                        setCurrentSelectorId('polygon')
+                    }}
+                >
+                    Polygon
+                </Button>
+
+                <Button
+                    className={
+                        'c-asset-map__selection-button --unselect c-asset-map__control-button ' +
+                        (selectedAssetsMap.size === 0 ? '--disabled' : '')
+                    }
+                    onClick={() => {
+                        selectedAssetsMap.size > 0 && handleRemoveSelection()
+                    }}
+                >
+                    Unselect
+                </Button>
+
+                <Button
+                    className={
+                        'c-asset-map__selection-button --undo c-asset-map__control-button ' +
+                        (operationCursor > -1 &&
+                        operationCursor < operationList.size
+                            ? ''
+                            : '--disabled')
+                    }
+                    onClick={handleUndo}
+                >
+                    Undo
+                </Button>
+
+                <Button
+                    className={
+                        'c-asset-map__selection-button --redo c-asset-map__control-button ' +
+                        (operationCursor < operationList.size - 1 &&
+                        operationList.size > -1
+                            ? ''
+                            : '--disabled')
+                    }
+                    onClick={handleRedo}
+                >
+                    Redo
+                </Button>
+
+                <Button
                     className={
                         'c-asset-map__toc-toggle c-asset-map__control-button ' +
                         (isTocDisplayed ? '--active' : '')
                     }
                     onClick={toggleToc}
-                />
+                >
+                    TOC
+                </Button>
             </div>
 
             {/* <IntersectLayersForm /> */}
