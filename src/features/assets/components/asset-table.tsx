@@ -21,6 +21,7 @@ import {
     TabsList,
     TabsTrigger,
 } from '../../../shared/components/ui/tabs'
+import { AssetMapContainer } from './asset-map-container'
 
 export function AssetTableContainer({ templates }: { templates: Template[] }) {
     const { selectedHierarchyItems } = useMainHierarchyFilterContext()
@@ -208,9 +209,7 @@ function AssetTable({
                 </TabsContent>
 
                 <TabsContent value="map">
-                    <div className="mt-10">
-                        <p>map</p>
-                    </div>
+                    <AssetMapContainer />
                 </TabsContent>
             </Tabs>
         </div>

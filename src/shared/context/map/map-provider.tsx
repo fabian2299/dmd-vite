@@ -1,5 +1,3 @@
-'use client'
-
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 import {
@@ -57,10 +55,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [templateList, setTemplateList] = useState<Template[]>([])
 
-    const [mainHierarchyParents, setMainHierarchyParents] = useState<number[]>(
-        []
-    )
-
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 
     const [rowAsset, setRowAsset] = useState<any>({
@@ -78,12 +72,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
     const [assignedLayers, setAssignedLayers] = useState<GOLayer[]>([])
 
     // refs
-    // This part was by mistake necessary
-    // since functions without arguments (which do not need parameters)
-    // have their closures defined and do not update the mutable.
-    // To fix this, from the useEffect you need to call the main function and keep calling them
-    // by paramters. Ref here holds a mutable value which contains the proper value of
-    // selectedAssets and operationCursor.
     const selectedAssetsMapRef = useRef<Map<number, FeatureLike>>(new Map())
     const operationCursorRef = useRef<number>(-1)
     const operationListRef = useRef<Map<number, AssetMapSelectionOperation>>(
@@ -108,7 +96,10 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    const [isLoading, setIsLoading] = useState(false)
+
     const generateMap = useCallback(async () => {
+        setIsLoading(true)
         // Generate layers from templates
         const mapLayers = await getLayers()
         const allTemplatesResponse = await findTemplatesForView()
@@ -181,6 +172,7 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         )
 
         // Set the assetMap state
+        setIsLoading(false)
         setAssetMap(goMap)
     }, [])
 
@@ -507,10 +499,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         [assetMap]
     )
 
-    const handleMainHierarchyParents = (parents: number[]) => {
-        setMainHierarchyParents(parents)
-    }
-
     const removeAllInteractions = useCallback(() => {
         // Removes interactions with the map
         if (currentInteractions != null && assetMap != null) {
@@ -546,6 +534,8 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             isOpenIntersectByAssetForm,
             isOpenIntersectForm,
             assignedLayers,
+            isLoading,
+            generateMap,
             setAssignedLayers,
             registerSelectionAction,
             setIsOpenIntersectForm,
@@ -562,8 +552,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             handleUndo,
             handleRedo,
             toggleToc,
-            handleMainHierarchyParents,
-            generateMap,
             handlePolygonSelection,
             handlePointerSelection,
             setIsCollapsed,
@@ -582,6 +570,7 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             isOpenIntersectByAssetForm,
             isOpenIntersectForm,
             assignedLayers,
+            isLoading,
             registerSelectionAction,
             removeAllInteractions,
             addCqlFilterToLayers,
