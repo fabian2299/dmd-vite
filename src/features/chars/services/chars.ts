@@ -10,6 +10,8 @@ export const charApi = createApi({
             'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/',
     }),
     tagTypes: ['Char'],
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
     endpoints: (builder) => ({
         // Queries
         getChars: builder.query<Characteristic[], void>({

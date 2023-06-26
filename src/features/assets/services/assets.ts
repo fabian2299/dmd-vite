@@ -19,8 +19,6 @@ export const assetApi = createApi({
             'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/',
     }),
     tagTypes: ['Asset'],
-    // 5 minutes
-    keepUnusedDataFor: 60 * 5,
     endpoints: (builder) => ({
         // Queries
         // Mutations

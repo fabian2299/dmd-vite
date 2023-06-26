@@ -8,6 +8,8 @@ export const templateApi = createApi({
         baseUrl:
             'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/',
     }),
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
     tagTypes: ['Template'],
     endpoints: (builder) => ({
         // Queries

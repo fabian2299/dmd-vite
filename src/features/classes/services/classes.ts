@@ -8,6 +8,8 @@ export const classApi = createApi({
         baseUrl:
             'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/',
     }),
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
     tagTypes: ['Class'],
     endpoints: (builder) => ({
         // Queries
