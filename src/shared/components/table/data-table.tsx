@@ -1,7 +1,7 @@
 'use client'
 
-import { ColumnDef, flexRender } from '@tanstack/react-table'
-import { Table as TableType } from '@tanstack/table-core'
+import { type ColumnDef, flexRender } from '@tanstack/react-table'
+import { type Table as TableType } from '@tanstack/table-core'
 import {
     Table,
     TableBody,
@@ -12,7 +12,8 @@ import {
 } from '../ui/table'
 
 interface DataTableProps<T> {
-    columns: ColumnDef<T, any>[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    columns: Array<ColumnDef<T, any>>
     table: TableType<T>
 }
 
@@ -40,7 +41,7 @@ export function DataTable<T>({ table, columns }: DataTableProps<T>) {
                     ))}
                 </TableHeader>
                 <TableBody>
-                    {table.getRowModel().rows?.length ? (
+                    {table.getRowModel().rows?.length !== 0 ? (
                         table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}

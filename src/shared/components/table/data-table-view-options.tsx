@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 'use client'
 
-import { Table } from '@tanstack/react-table'
+import { type Table } from '@tanstack/react-table'
 import { SlidersHorizontal } from 'lucide-react'
 import {
     DropdownMenu,
@@ -47,9 +48,10 @@ export function DataTableViewOptions<TData>({
                                 key={column.id}
                                 className="capitalize"
                                 checked={column.getIsVisible()}
-                                onCheckedChange={(value: any) =>
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                onCheckedChange={(value: any) => {
                                     column.toggleVisibility(!!value)
-                                }
+                                }}
                             >
                                 {column.id}
                             </DropdownMenuCheckboxItem>

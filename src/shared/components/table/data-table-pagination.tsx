@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type Table } from '@tanstack/react-table'
 import {
     ChevronLeft,

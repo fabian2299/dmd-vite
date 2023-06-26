@@ -23,7 +23,7 @@ export function AsideMenu() {
                             <div className="mt-20 flex w-full flex-col gap-8">
                                 <Link
                                     className={`${buttonVariants()}w-full`}
-                                    to="/resources/characteristics"
+                                    to="/resources/assets"
                                 >
                                     Resources
                                 </Link>
@@ -37,9 +37,9 @@ export function AsideMenu() {
 
                                 <Link
                                     className={`${buttonVariants()} w-full`}
-                                    to="/applications"
+                                    to="/apps"
                                 >
-                                    Applications
+                                    Apps
                                 </Link>
 
                                 <Link
