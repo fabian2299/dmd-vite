@@ -4,7 +4,7 @@ import { useAsideMenuContext } from '../context/aside-menu-context'
 import { AsideMenu } from '../components/aside-menu'
 import { MainHierarchyMenu } from '../components/main-hierarchy-menu'
 import { Outlet } from 'react-router-dom'
-import { useGetMainHierarchyItemsQuery } from '../../features/hierarchies/services/hierarchies'
+import { useGetMainHierarchyItemsQuery } from '../features/hierarchies/services/hierarchies'
 
 export function MainLayout() {
     const { isAsideMenuOpen, setIsAsideMenuOpen } = useAsideMenuContext()

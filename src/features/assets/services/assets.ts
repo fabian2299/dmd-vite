@@ -1,11 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import {
-    type Asset,
     type AssetPagination,
     type AssetTableView,
     type AssetTableViewFilters,
-} from '../../../shared/types/asset'
-import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
+} from '@/types/asset'
+import { axiosBaseQuery } from '@/lib/axios-base-query'
 
 interface AssetFilters {
     filters: AssetTableViewFilters[]
@@ -37,19 +36,6 @@ export const assetApi = createApi({
                 data: filters,
             }),
         }),
-        addAsset: builder.mutation<Asset, any>({
-            query: (body) => ({
-                url: 'asset/',
-                method: 'POST',
-                data: body,
-            }),
-        }),
-        deleteAssset: builder.mutation<void, number>({
-            query: (id) => ({
-                url: `asset/${id}/`,
-                method: 'DELETE',
-            }),
-        }),
     }),
 })
 
@@ -57,6 +43,4 @@ export const {
     // Mutations
     useGetAssetsMutation,
     useGetCountMutation,
-    useAddAssetMutation,
-    useDeleteAsssetMutation,
 } = assetApi

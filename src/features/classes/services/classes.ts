@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
-import { type Class } from '../../../shared/types/class'
+import { axiosBaseQuery } from '@/lib/axios-base-query'
+import { type Class } from '@/types/class'
 
 export const classApi = createApi({
     reducerPath: 'classApi',
@@ -9,7 +9,7 @@ export const classApi = createApi({
             'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/',
     }),
     refetchOnReconnect: true,
-    refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: 30,
     tagTypes: ['Class'],
     endpoints: (builder) => ({
         // Queries

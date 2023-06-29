@@ -18,7 +18,6 @@ interface MapContextProps {
     TOC_ID: string
     POLYGON_SELECTION_INTERACTION_ID: string
     selectedAssetsMap: Map<number, FeatureLike>
-    templateList: Template[]
     assetMap: GOMap | undefined
     selectedAssetsMapRef: React.MutableRefObject<Map<number, FeatureLike>>
     operationCursor: number
@@ -31,9 +30,7 @@ interface MapContextProps {
     rowAsset: any
     isOpenIntersectByAssetForm: boolean
     isOpenIntersectForm: boolean
-    assignedLayers: GOLayer[]
     isLoading: boolean
-    setAssignedLayers: React.Dispatch<React.SetStateAction<GOLayer[]>>
     registerSelectionAction: (
         type: 'add' | 'remove',
         features: Map<number, FeatureLike>
@@ -43,7 +40,10 @@ interface MapContextProps {
     setIsOpenIntersectByAssetForm: React.Dispatch<React.SetStateAction<boolean>>
     setRowAsset: React.Dispatch<React.SetStateAction<any>>
     removeAllInteractions: () => void
-    addCqlFilterToLayers: (layers: Map<string, GOLayer>) => void
+    addCqlFilterToLayers: (
+        layers: Map<string, GOLayer>,
+        templates: Template[]
+    ) => void
     centerFeature: (geometryType: string, extent: number[]) => void
     deselectFeatures: (featureId: number) => void
     setSelectedAssetsMap: React.Dispatch<
@@ -59,7 +59,7 @@ interface MapContextProps {
     handleUndo: () => void
     handleRedo: () => void
     toggleToc: () => void
-    generateMap: () => Promise<void>
+    generateMap: (mapLayers: GOLayer[]) => Promise<void>
     handlePolygonSelection: (featureList: FeatureLike[]) => void
     handlePointerSelection: (
         event: MapBrowserEvent<UIEvent>,

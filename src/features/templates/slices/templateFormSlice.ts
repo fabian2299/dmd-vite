@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '../../../shared/store/store'
+import type { RootState } from '@/store/store'
 import { z } from 'zod'
-import { GeometryType, type Template } from '../../../shared/types/template'
+import { GeometryType, type Template } from '@/types/template'
 
 interface TemplateFormState {
     templateDTO: Template

@@ -1,25 +1,27 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { Class } from '../../../shared/types/class'
-import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
+import { type ColumnDef } from '@tanstack/react-table'
+import { type Class } from '@/types/class'
+import { Checkbox } from '../../../components/ui/checkbox'
+import { DataTableColumnHeader } from '../../../components/table/data-table-column-header'
 import { ClassTableActions } from '../components/class-table/class-table-actions'
 
-export const classColumns: ColumnDef<Class>[] = [
+export const classColumns: Array<ColumnDef<Class>> = [
     {
         id: 'select',
         header: ({ table }) => (
             <Checkbox
                 checked={table.getIsAllPageRowsSelected()}
-                onCheckedChange={(value) =>
+                onCheckedChange={(value) => {
                     table.toggleAllPageRowsSelected(!!value)
-                }
+                }}
                 aria-label="Select all"
             />
         ),
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                onCheckedChange={(value) => {
+                    row.toggleSelected(!!value)
+                }}
                 aria-label="Select row"
             />
         ),

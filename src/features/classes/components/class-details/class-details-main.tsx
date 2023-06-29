@@ -6,9 +6,9 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '../../../../shared/components/ui/form'
-import { Input } from '../../../../shared/components/ui/input'
-import { Checkbox } from '../../../../shared/components/ui/checkbox'
+} from '../../../../components/ui/form'
+import { Input } from '../../../../components/ui/input'
+import { Checkbox } from '../../../../components/ui/checkbox'
 
 export function ClassDetailsMain({
     form,

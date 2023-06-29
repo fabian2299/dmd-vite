@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type ColumnDef } from '@tanstack/react-table'
-import { type AssetWithTemplate } from '../../../shared/types/asset'
-import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
+import { type AssetWithTemplate } from '@/types/asset'
+import { Checkbox } from '../../../components/ui/checkbox'
+import { DataTableColumnHeader } from '../../../components/table/data-table-column-header'
 
 export const assetColumns: Array<ColumnDef<AssetWithTemplate>> = [
     {

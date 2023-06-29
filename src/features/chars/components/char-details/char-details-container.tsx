@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import { useModalContext } from '../../../../shared/context/modal-context'
+import { useModalContext } from '@/context/modal-context'
 import { useGetCharByIdQuery } from '../../services/chars'
 import { CharDetails } from './char-details'
 import { Loader2 } from 'lucide-react'
-import { toast } from '../../../../shared/components/ui/use-toast'
+import { toast } from '../../../../components/ui/use-toast'
 import { useEffect } from 'react'
 
 export function CharDetailsContainer({ charId }: { charId: string }) {

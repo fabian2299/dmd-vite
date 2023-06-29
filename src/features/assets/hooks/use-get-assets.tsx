@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useGetAssetsMutation, useGetCountMutation } from '../services/assets'
-import {
-    type AssetTableViewFilters,
-    type AssetTableView,
-} from '../../../shared/types/asset'
+import { type AssetTableViewFilters, type AssetTableView } from '@/types/asset'
 
 interface Props {
-    filters: any
+    filters: AssetTableViewFilters[]
     pagination: {
         page: number
         pageSize: number

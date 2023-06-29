@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
-import { type Template } from '../../../shared/types/template'
+import { Checkbox } from '../../../components/ui/checkbox'
+import { DataTableColumnHeader } from '../../../components/table/data-table-column-header'
+import { type Template } from '@/types/template'
 import { TemplateTableActions } from '../components/template-table/template-table-actions'
 
 export const templateColumns: Array<ColumnDef<Template>> = [
@@ -55,7 +55,8 @@ export const templateColumns: Array<ColumnDef<Template>> = [
         cell: ({ cell }) => {
             const classImplementations = cell.row.original.classImplementations
             const classNames = classImplementations
-                .map((c) => c.name)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .map((c: any) => c.name)
                 .join(', ')
 
             return (

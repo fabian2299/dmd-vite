@@ -3,19 +3,19 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '../../../shared/components/ui/popover'
-import { Button } from '../../../shared/components/ui/button'
-import { Check, ChevronsUpDown } from 'lucide-react'
+} from '../../../components/ui/popover'
+import { Button } from '../../../components/ui/button'
+import { CheckIcon, ChevronsUpDown } from 'lucide-react'
 import {
     Command,
     CommandEmpty,
     CommandGroup,
     CommandInput,
     CommandItem,
-} from '../../../shared/components/ui/command'
-import { cn } from '../../../shared/utils'
-import { type Template } from '../../../shared/types/template'
-import { ScrollArea } from '../../../shared/components/ui/scroll-area'
+} from '../../../components/ui/command'
+import { ScrollArea } from '../../../components/ui/scroll-area'
+import { type Template } from '@/types/template'
+import { cn } from '@/utils/utils'
 
 interface TemplateFilterProps {
     templates: Template[]
@@ -37,18 +37,18 @@ export function TemplateFilter({
         id: template.id,
     }))
 
-    useEffect(() => {
-        if (selectedTemplateId === '') {
-            setValue('')
-        }
-    }, [selectedTemplateId])
-
     const selectedTemplateName = React.useMemo(() => {
         const template = templates.find(
             (template) => template.id.toString() === selectedTemplateId
         )
         return template?.name
     }, [selectedTemplateId, templates])
+
+    useEffect(() => {
+        if (selectedTemplateId === '') {
+            setValue('')
+        }
+    }, [selectedTemplateId])
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -76,20 +76,29 @@ export function TemplateFilter({
                                 <CommandItem
                                     key={template.id}
                                     onSelect={(currentValue) => {
-                                        onSelectTemplate(template.id.toString())
+                                        onSelectTemplate(
+                                            currentValue === value
+                                                ? ''
+                                                : template.id.toString()
+                                        )
+                                        setValue(
+                                            currentValue === value
+                                                ? ''
+                                                : currentValue
+                                        )
                                         setOpen(false)
-                                        setValue(currentValue)
                                     }}
                                 >
-                                    <Check
+                                    {template.label}
+                                    <CheckIcon
                                         className={cn(
-                                            'mr-2 h-4 w-4',
-                                            value === template.value
+                                            'ml-auto h-4 w-4',
+                                            template.id.toString() ===
+                                                selectedTemplateId
                                                 ? 'opacity-100'
                                                 : 'opacity-0'
                                         )}
                                     />
-                                    {template.label}
                                 </CommandItem>
                             ))}
                         </CommandGroup>

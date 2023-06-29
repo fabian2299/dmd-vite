@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '../../../shared/store/store'
+import type { RootState } from '@/store/store'
 import { z } from 'zod'
-import { type Class } from '../../../shared/types/class'
+import { type Class } from '@/types/class'
 
 interface ClassFormState {
     classDTO: Class

@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
-import { type HierarchyItems } from '../../../shared/types/hierarchy'
+import { axiosBaseQuery } from '@/lib/axios-base-query'
+import { type HierarchyItems } from '@/types/hierarchy'
 
 export const hierarchyApi = createApi({
     reducerPath: 'hierarchyApi',
@@ -31,6 +31,4 @@ export const hierarchyApi = createApi({
     }),
 })
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
 export const { useGetMainHierarchyItemsQuery, usePrefetch } = hierarchyApi

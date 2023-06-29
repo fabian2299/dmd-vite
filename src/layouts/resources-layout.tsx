@@ -1,7 +1,7 @@
 import { Link, Outlet } from 'react-router-dom'
-import { usePrefetch as usePrefetchClasses } from '../../features/classes/services/classes'
-import { usePrefetch as usePrefetchChars } from '../../features/chars/services/chars'
-import { usePrefetch as usePrefetchTemplates } from '../../features/templates/services/templates'
+import { usePrefetch as usePrefetchClasses } from '@/features/classes/services/classes'
+import { usePrefetch as usePrefetchChars } from '@/features/chars/services/chars'
+import { usePrefetch as usePrefetchTemplates } from '@/features/templates/services/templates'
 
 export function ResourcesLayout() {
     const prefetchClasses = usePrefetchClasses('getClasses')

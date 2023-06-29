@@ -9,14 +9,11 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from '../../../../shared/components/ui/alert-dialog'
-import { Button, buttonVariants } from '../../../../shared/components/ui/button'
+} from '../../../../components/ui/alert-dialog'
+import { Button, buttonVariants } from '../../../../components/ui/button'
 import { useState } from 'react'
-import {
-    type ErrorHandlerMap,
-    ErrorTypeEnum,
-} from '../../../../shared/lib/errors'
-import { toast } from '../../../../shared/components/ui/use-toast'
+import { type ErrorHandlerMap, ErrorTypeEnum } from '@/lib/errors'
+import { toast } from '../../../../components/ui/use-toast'
 import { type AxiosError } from 'axios'
 import { useDeleteTemplateMutation } from '../../services/templates'
 

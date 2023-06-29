@@ -1,10 +1,10 @@
-import { DataTable } from '../../../../shared/components/table/data-table'
-import { DataTablePagination } from '../../../../shared/components/table/data-table-pagination'
-import { DataTableViewOptions } from '../../../../shared/components/table/data-table-view-options'
-import { Input } from '../../../../shared/components/ui/input'
-import { ScrollArea } from '../../../../shared/components/ui/scroll-area'
-import { useDataTable } from '../../../../shared/hooks/use-data-table'
-import { type ClassImplementation } from '../../../../shared/types/characteristic'
+import { DataTable } from '../../../../components/table/data-table'
+import { DataTablePagination } from '../../../../components/table/data-table-pagination'
+import { DataTableViewOptions } from '../../../../components/table/data-table-view-options'
+import { Input } from '../../../../components/ui/input'
+import { ScrollArea } from '../../../../components/ui/scroll-area'
+import { useDataTable } from '@/hooks/use-data-table'
+import { type ClassImplementation } from '@/types/characteristic'
 import { charClassColumns } from '../../utils/char-classes-columns'
 
 export function CharDetailsClasses({ data }: { data: ClassImplementation[] }) {

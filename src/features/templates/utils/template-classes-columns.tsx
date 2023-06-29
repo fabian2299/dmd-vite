@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type ColumnDef } from '@tanstack/react-table'
-import { type Class } from '../../../shared/types/class'
-import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
+import { type Class } from '@/types/class'
+import { Checkbox } from '../../../components/ui/checkbox'
+import { DataTableColumnHeader } from '../../../components/table/data-table-column-header'
 
 export const templateClassesColumns: Array<ColumnDef<Class>> = [
     {

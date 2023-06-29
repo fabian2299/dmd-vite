@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type ColumnDef } from '@tanstack/react-table'
-import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { type Characteristic } from '../../../shared/types/characteristic'
-import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
+import { Checkbox } from '../../../components/ui/checkbox'
+import { type Characteristic } from '@/types/characteristic'
+import { DataTableColumnHeader } from '../../../components/table/data-table-column-header'
 import { CharTableActions } from '../components/char-table/char-table-actions'
 
 export const charColumns: Array<ColumnDef<Characteristic>> = [

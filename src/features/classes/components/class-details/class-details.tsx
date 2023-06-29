@@ -1,32 +1,29 @@
-import { Button } from '../../../../shared/components/ui/button'
+import { Button } from '../../../../components/ui/button'
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-} from '../../../../shared/components/ui/tabs'
+} from '../../../../components/ui/tabs'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form } from '../../../../shared/components/ui/form'
-import { toast } from '../../../../shared/components/ui/use-toast'
-import { useModalContext } from '../../../../shared/context/modal-context'
+import { Form } from '../../../../components/ui/form'
+import { toast } from '../../../../components/ui/use-toast'
+import { useModalContext } from '@/context/modal-context'
 import { useNavigate } from 'react-router-dom'
-import {
-    type ErrorHandlerMap,
-    ErrorTypeEnum,
-} from '../../../../shared/lib/errors'
+import { type ErrorHandlerMap, ErrorTypeEnum } from '@/lib/errors'
 import { Loader2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../../../shared/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '../../../../shared/components/ui/tooltip'
+} from '../../../../components/ui/tooltip'
 import { type AxiosError } from 'axios'
-import { cn } from '../../../../shared/utils/utils'
-import { type Class } from '../../../../shared/types/class'
+import { cn } from '@/utils/utils'
+import { type Class } from '@/types/class'
 import { useUpdateClassMutation } from '../../services/classes'
 import {
     type UpdateClassDTO,

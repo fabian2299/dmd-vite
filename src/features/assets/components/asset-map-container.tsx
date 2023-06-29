@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
+import { useMapContext } from '@/context/map/map-context'
 import { AssetMap } from './asset-map'
 import { Loader2 } from 'lucide-react'
-import { useEffect } from 'react'
-import { useMapContext } from '../../../shared/context/map/map-context'
+import { useEffect, useMemo } from 'react'
+import { type GOLayer } from '@goaigua/go-gisapi'
 
-export function AssetMapContainer() {
-    return <AssetMapLoaded />
-}
+export function AssetMapContainer({ mapLayers }: { mapLayers: GOLayer[] }) {
+    const mapLayersCopy = useMemo(() => structuredClone(mapLayers), [mapLayers])
 
-const AssetMapLoaded = () => {
     const {
         MAP_ID,
         TOC_ID,
@@ -20,20 +18,20 @@ const AssetMapLoaded = () => {
     } = useMapContext()
 
     useEffect(() => {
-        generateMap()
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        generateMap(mapLayersCopy)
 
         return () => {
             setAssetMap(undefined)
         }
-    }, [generateMap, setAssetMap])
+    }, [generateMap, mapLayersCopy, setAssetMap])
 
     useEffect(() => {
         if (assetMap == null) return
 
-        const firstChildDiv = document.querySelector('#' + MAP_ID + ' > div')
+        const firstChildDiv = document.querySelector(`#${MAP_ID} > div`)
 
         if (firstChildDiv != null) {
-            // Add tailwind classes to the first child div
             firstChildDiv.classList.add(
                 'rounded-md',
                 'shadow-lg',

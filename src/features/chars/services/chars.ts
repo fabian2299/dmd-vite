@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
-import { type Characteristic } from '../../../shared/types/characteristic'
+import { axiosBaseQuery } from '@/lib/axios-base-query'
+import { type Characteristic } from '@/types/characteristic'
 
 export const charApi = createApi({
     reducerPath: 'charApi',
@@ -11,7 +11,7 @@ export const charApi = createApi({
     }),
     tagTypes: ['Char'],
     refetchOnReconnect: true,
-    refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: 30,
     endpoints: (builder) => ({
         // Queries
         getChars: builder.query<Characteristic[], void>({

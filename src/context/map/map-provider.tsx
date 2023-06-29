@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-
 import {
     type GOLayer,
     type GOMap,
@@ -9,7 +8,6 @@ import {
     position_x,
     position_y,
 } from '@goaigua/go-gisapi'
-
 import { type MapBrowserEvent, type Map as OlMap } from 'ol'
 import { type FeatureLike } from 'ol/Feature'
 import { unByKey } from 'ol/Observable'
@@ -17,22 +15,18 @@ import { type EventsKey } from 'ol/events'
 import { useMainHierarchyFilterContext } from '../main-hierarchy-items-filter-context'
 import { MapContext, type AssetMapSelectionOperation } from './map-context'
 import { type Template } from '../../types/template'
-import {
-    findTemplatesForView,
-    getAssignedLayersFromPortal,
-} from './_services/map/queries'
 
 export const MapProvider = ({ children }: { children: React.ReactNode }) => {
-    // third party hooks
-
     // constants
     const MAP_ID = 'asset-map'
     const TOC_ID = 'toc-container'
     const GO_TOC_DEFAULT_ID = 'ownTocContainer'
     const POLYGON_SELECTION_INTERACTION_ID = 'polygon-selection'
 
-    // context
     const { selectedHierarchyItems } = useMainHierarchyFilterContext()
+    const objectTemplateSearch = ''
+    const objectNameSearch = ''
+    const objectDescriptionSearch = ''
 
     // local state
     const [selectedAssetsMap, setSelectedAssetsMap] = useState<
@@ -53,11 +47,14 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [assetMap, setAssetMap] = useState<GOMap>()
 
-    const [templateList, setTemplateList] = useState<Template[]>([])
-
     const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
 
-    const [rowAsset, setRowAsset] = useState<any>({
+    const [rowAsset, setRowAsset] = useState<{
+        id: number
+        templateName: string
+        name: string
+        feature: FeatureLike
+    }>({
         id: -1,
         templateName: '',
         name: '',
@@ -68,8 +65,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         useState(false)
 
     const [isOpenIntersectForm, setIsOpenIntersectForm] = useState(false)
-
-    const [assignedLayers, setAssignedLayers] = useState<GOLayer[]>([])
 
     // refs
     const selectedAssetsMapRef = useRef<Map<number, FeatureLike>>(new Map())
@@ -85,120 +80,87 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
     const currentInteractions = useRef<EventsKey[]>([])
     const firstUpdate = useRef(true)
 
-    // functions
-    const getLayers = async () => {
-        try {
-            const mapLayers = await getAssignedLayersFromPortal()
-            setAssignedLayers(mapLayers)
-            return mapLayers
-        } catch (error) {
-            console.error('error', error)
-        }
-    }
-
     const [isLoading, setIsLoading] = useState(false)
-
     const isGeneratingMapRef = useRef(false)
 
-    const generateMap = useCallback(async () => {
+    const generateMap = useCallback(async (mapLayers: GOLayer[]) => {
         if (isGeneratingMapRef.current) return
         isGeneratingMapRef.current = true
+
         setIsLoading(true)
-        try {
-            const mapLayers = await getLayers()
-            const allTemplatesResponse = await findTemplatesForView()
 
-            if (mapLayers == null || allTemplatesResponse == null) return
-
-            setTemplateList(
-                allTemplatesResponse.filter(
-                    (template: Template) => template.layerName
-                )
-            )
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const config: any = {
-                GOMapOptions: [
-                    {
-                        id: MAP_ID,
-                        div: 'asset-map',
-                        optionView: {
-                            id: 'vista1',
-                            center: [-42010.86, 4789184.35],
-                            zoom: 12,
-                            projection: '3857',
-                        },
-                        filter: '',
-                        bbox: false,
-                        optionToc: {
-                            id: TOC_ID,
-                            lang: languages.EN,
-                            active: true,
-                            position_x: position_x.RIGHT,
-                            position_y: position_y.TOP,
-                            legend: true,
-                            max_height: 500,
-                            margin_lateral: 0,
-                            no_switcher: [
-                                {
-                                    folder: `Base Layers/`,
-                                    unique_active: true,
-                                },
-                            ],
-                        },
-                        layer: [
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const config: any = {
+            GOMapOptions: [
+                {
+                    id: MAP_ID,
+                    div: 'asset-map',
+                    optionView: {
+                        id: 'vista1',
+                        center: [-42010.86, 4789184.35],
+                        zoom: 12,
+                        projection: '3857',
+                    },
+                    filter: '',
+                    bbox: false,
+                    optionToc: {
+                        id: TOC_ID,
+                        lang: languages.EN,
+                        active: true,
+                        position_x: position_x.RIGHT,
+                        position_y: position_y.TOP,
+                        legend: true,
+                        max_height: 500,
+                        margin_lateral: 0,
+                        no_switcher: [
                             {
-                                id: 'DarkTheme',
-                                alias: 'Base',
-                                layerType: 'GO_MAPBOX',
-                                isBaseLayer: true,
-                                urlFolder: `Base Layers/`,
-                                style: 'ckugiqlos8tem17mpk9ne2oxd',
-                                token: 'pk.eyJ1IjoiaWRyaWNhIiwiYSI6ImNrdWZpNHAwOTFlOHcycm10ZWlvcTJodTkifQ.kDBecIZHGx-7nf807n2xIQ',
-                                epsg: 4326,
-                                filter: '',
-                                srs: 'EPSG:3857',
-                                bbox: false,
+                                folder: `Base Layers/`,
+                                unique_active: true,
                             },
-                            ...mapLayers,
                         ],
                     },
-                ],
-            }
-
-            GoMapLoader.AddToken('')
-
-            // Load the GoMap with the provided configuration
-            const goMap = await GoMapLoader.loadGoMap(
-                config,
-                'https://gateway-proxy.dev.idrica.pro/',
-                GO_CONFIG.REGION_ENVIROMENTS.EUROPE
-            )
-
-            if (goMap == null) throw new Error('GoMap is null')
-
-            setAssetMap(goMap)
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setIsLoading(false)
-            isGeneratingMapRef.current = false
+                    layer: [
+                        {
+                            id: 'DarkTheme',
+                            alias: 'Base',
+                            layerType: 'GO_MAPBOX',
+                            isBaseLayer: true,
+                            urlFolder: `Base Layers/`,
+                            style: 'ckugiqlos8tem17mpk9ne2oxd',
+                            token: 'pk.eyJ1IjoiaWRyaWNhIiwiYSI6ImNrdWZpNHAwOTFlOHcycm10ZWlvcTJodTkifQ.kDBecIZHGx-7nf807n2xIQ',
+                            epsg: 4326,
+                            filter: '',
+                            srs: 'EPSG:3857',
+                            bbox: false,
+                        },
+                        ...mapLayers,
+                    ],
+                },
+            ],
         }
+
+        GoMapLoader.AddToken('')
+
+        // Load the GoMap with the provided configuration
+        const goMap = await GoMapLoader.loadGoMap(
+            config,
+            'https://gateway-proxy.dev.idrica.pro/',
+            GO_CONFIG.REGION_ENVIROMENTS.EUROPE
+        )
+
+        isGeneratingMapRef.current = false
+        setIsLoading(false)
+        setAssetMap(goMap)
     }, [])
 
-    const objectTemplateSearch = ''
-    const objectNameSearch = ''
-    const objectDescriptionSearch = ''
-
     const addCqlFilterToLayers = useCallback(
-        (layers: Map<string, GOLayer>) => {
+        (layers: Map<string, GOLayer>, templates: Template[]) => {
             const buildFilters = () => {
                 const filter: string[] = []
-                console.log('selectedHierarchyItems', selectedHierarchyItems)
 
                 // Apply template filter
                 if (objectTemplateSearch.length > 0) {
-                    const currentTemplate = templateList.find(
+                    const currentTemplate = templates.find(
                         (template: Template) =>
                             template.id === +objectTemplateSearch
                     )
@@ -233,21 +195,17 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
 
             const filterString = buildFilters()
 
-            console.log('filterString', filterString)
-
             layers.forEach((layer) => {
                 const alias = layer?.getAlias()
 
-                if (
-                    alias !== 'Base' &&
-                    layer?.getLayerType() !== 'GO_WMS_LAYER'
-                ) {
+                if (alias !== 'Base') {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const currentLayer = layer as GOLayer & { addFilter: any }
                     currentLayer.addFilter(filterString, false)
                 }
             })
         },
-        [selectedHierarchyItems, templateList]
+        [selectedHierarchyItems]
     )
 
     const removeFeaturesFromSelection = useCallback(
@@ -439,6 +397,7 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             features.forEach((feature) => {
                 const featureProperties = feature.getProperties()
                 let isVisible = true
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 assetMap?.getLayers(MAP_ID).forEach((layer: any) => {
                     if (featureProperties.template_name === layer.layerAlias) {
                         isVisible = layer.layer.getProperties().visible
@@ -533,7 +492,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             TOC_ID,
             POLYGON_SELECTION_INTERACTION_ID,
             selectedAssetsMap,
-            templateList,
             assetMap,
             selectedAssetsMapRef,
             operationCursor,
@@ -546,10 +504,8 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             rowAsset,
             isOpenIntersectByAssetForm,
             isOpenIntersectForm,
-            assignedLayers,
             isLoading,
             generateMap,
-            setAssignedLayers,
             registerSelectionAction,
             setIsOpenIntersectForm,
             setIsOpenIntersectByAssetForm,
@@ -573,7 +529,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
         }),
         [
             selectedAssetsMap,
-            templateList,
             assetMap,
             operationCursor,
             operationList,
@@ -583,7 +538,6 @@ export const MapProvider = ({ children }: { children: React.ReactNode }) => {
             rowAsset,
             isOpenIntersectByAssetForm,
             isOpenIntersectForm,
-            assignedLayers,
             isLoading,
             registerSelectionAction,
             removeAllInteractions,

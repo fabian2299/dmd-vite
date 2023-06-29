@@ -1,35 +1,32 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../../../../shared/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from '../../../../shared/components/ui/use-toast'
+import { toast } from '../../../../components/ui/use-toast'
 import { type AxiosError } from 'axios'
-import {
-    type ErrorHandlerMap,
-    ErrorTypeEnum,
-} from '../../../../shared/lib/errors'
+import { type ErrorHandlerMap, ErrorTypeEnum } from '@/lib/errors'
 import {
     Dialog,
     DialogContent,
     DialogTrigger,
-} from '../../../../shared/components/ui/dialog'
-import { Button, buttonVariants } from '../../../../shared/components/ui/button'
-import { Form } from '../../../../shared/components/ui/form'
+} from '../../../../components/ui/dialog'
+import { Button, buttonVariants } from '../../../../components/ui/button'
+import { Form } from '../../../../components/ui/form'
 
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '../../../../shared/components/ui/tooltip'
-import { cn } from '../../../../shared/utils/utils'
+} from '../../../../components/ui/tooltip'
+import { cn } from '@/utils/utils'
 import { Loader2 } from 'lucide-react'
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-} from '../../../../shared/components/ui/tabs'
+} from '../../../../components/ui/tabs'
 import { useCreateTemplateMutation } from '../../services/templates'
 import {
     type CreateTemplateDTO,
@@ -39,7 +36,7 @@ import {
     templateFormSchema,
 } from '../../slices/templateFormSlice'
 import { usePrefetch } from '../../../classes/services/classes'
-import { GeometryType } from '../../../../shared/types/template'
+import { GeometryType } from '@/types/template'
 import { CreateTemplateMain } from './create-template-main'
 import { CreateTemplateClasses } from './create-template-classes'
 

@@ -7,16 +7,16 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '../../../../shared/components/ui/form'
-import { Input } from '../../../../shared/components/ui/input'
+} from '../../../../components/ui/form'
+import { Input } from '../../../../components/ui/input'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '../../../../shared/components/ui/select'
-import { GeometryType } from '../../../../shared/types/template'
+} from '../../../../components/ui/select'
+import { GeometryType } from '@/types/template'
 
 export function TemplateDetailsMain({
     form,

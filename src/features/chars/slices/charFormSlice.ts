@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { RootState } from '../../../shared/store/store'
-import { TypeValues } from '../../../shared/types/characteristic'
-import type { Characteristic } from '../../../shared/types/characteristic'
+import type { RootState } from '@/store/store'
+import { TypeValues } from '@/types/characteristic'
+import type { Characteristic } from '@/types/characteristic'
 import { z } from 'zod'
 
 interface CharFormState {

@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { usePrefetch } from '../../services/classes'
-import { Button } from '../../../../shared/components/ui/button'
+import { Button } from '../../../../components/ui/button'
 import { Edit } from 'lucide-react'
 import { DeleteClass } from './delete-class'
-import { useModalContext } from '../../../../shared/context/modal-context'
+import { useModalContext } from '@/context/modal-context'
 
 export function ClassTableActions({ classId }: { classId: string }) {
     const navigate = useNavigate()

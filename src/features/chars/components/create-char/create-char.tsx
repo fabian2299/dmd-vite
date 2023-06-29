@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { TypeValues } from '../../../../shared/types/characteristic'
-import { toast } from '../../../../shared/components/ui/use-toast'
+import { TypeValues } from '@/types/characteristic'
+import { toast } from '../../../../components/ui/use-toast'
 import {
     Dialog,
     DialogTrigger,
     DialogContent,
-} from '../../../../shared/components/ui/dialog'
-import { Button, buttonVariants } from '../../../../shared/components/ui/button'
+} from '../../../../components/ui/dialog'
+import { Button, buttonVariants } from '../../../../components/ui/button'
 import {
     Form,
     FormControl,
@@ -15,21 +15,18 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '../../../../shared/components/ui/form'
-import { Input } from '../../../../shared/components/ui/input'
+} from '../../../../components/ui/form'
+import { Input } from '../../../../components/ui/input'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '../../../../shared/components/ui/select'
+} from '../../../../components/ui/select'
 import { Loader2 } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-    type ErrorHandlerMap,
-    ErrorTypeEnum,
-} from '../../../../shared/lib/errors'
+import { type ErrorHandlerMap, ErrorTypeEnum } from '@/lib/errors'
 import { useCreateCharMutation } from '../../services/chars'
 import {
     type CreateCharDTO,
@@ -38,15 +35,15 @@ import {
     selectCharDTO,
     setCharDTO,
 } from '../../slices/charFormSlice'
-import { useAppDispatch, useAppSelector } from '../../../../shared/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '../../../../shared/components/ui/tooltip'
+} from '../../../../components/ui/tooltip'
 import { type AxiosError } from 'axios'
-import { cn } from '../../../../shared/utils/utils'
+import { cn } from '@/utils/utils'
 
 export function CreateChar() {
     const [open, setOpen] = useState(false)

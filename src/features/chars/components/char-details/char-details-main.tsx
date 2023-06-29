@@ -5,16 +5,16 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '../../../../shared/components/ui/form'
-import { Input } from '../../../../shared/components/ui/input'
+} from '../../../../components/ui/form'
+import { Input } from '../../../../components/ui/input'
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '../../../../shared/components/ui/select'
-import { TypeValues } from '../../../../shared/types/characteristic'
+} from '../../../../components/ui/select'
+import { TypeValues } from '@/types/characteristic'
 import { type UpdateCharDTO } from '../../slices/charFormSlice'
 
 interface CharDetailsMainProps {

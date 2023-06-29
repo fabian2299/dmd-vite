@@ -1,24 +1,27 @@
-import { ColumnDef } from '@tanstack/react-table'
-import { ClassImplementation } from '../../../shared/types/characteristic'
-import { Checkbox } from '../../../shared/components/ui/checkbox'
-import { DataTableColumnHeader } from '../../../shared/components/table/data-table-column-header'
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+import { type ColumnDef } from '@tanstack/react-table'
+import { type ClassImplementation } from '@/types/characteristic'
+import { Checkbox } from '../../../components/ui/checkbox'
+import { DataTableColumnHeader } from '../../../components/table/data-table-column-header'
 
-export const charClassColumns: ColumnDef<ClassImplementation>[] = [
+export const charClassColumns: Array<ColumnDef<ClassImplementation>> = [
     {
         id: 'select',
         header: ({ table }) => (
             <Checkbox
                 checked={table.getIsAllPageRowsSelected()}
-                onCheckedChange={(value) =>
+                onCheckedChange={(value) => {
                     table.toggleAllPageRowsSelected(!!value)
-                }
+                }}
                 aria-label="Select all"
             />
         ),
         cell: ({ row }) => (
             <Checkbox
                 checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                onCheckedChange={(value) => {
+                    row.toggleSelected(!!value)
+                }}
                 aria-label="Select row"
             />
         ),

@@ -1,17 +1,13 @@
 import React, { useState } from 'react'
-import { useMainHierarchyFilterContext } from '../../../shared/context/main-hierarchy-items-filter-context'
 import { useAssetFilters } from '../hooks/use-asset-filters'
 import { useGetAssets } from '../hooks/use-get-assets'
-import { type AssetWithTemplate } from '../../../shared/types/asset'
-import { Input } from '../../../shared/components/ui/input'
-import { Button } from '../../../shared/components/ui/button'
-import { useAssetDataTable } from '../../../shared/hooks/use-data-table'
+import { Input } from '../../../components/ui/input'
+import { Button } from '../../../components/ui/button'
 import { assetColumns } from '../utils/asset-columns'
-import { DataTableViewOptions } from '../../../shared/components/table/data-table-view-options'
-import { DataTable } from '../../../shared/components/table/data-table'
-import { DataTablePagination } from '../../../shared/components/table/data-table-pagination'
-import { ScrollArea } from '../../../shared/components/ui/scroll-area'
-import { type Template } from '../../../shared/types/template'
+import { DataTableViewOptions } from '../../../components/table/data-table-view-options'
+import { DataTable } from '../../../components/table/data-table'
+import { DataTablePagination } from '../../../components/table/data-table-pagination'
+import { ScrollArea } from '../../../components/ui/scroll-area'
 import { Loader2 } from 'lucide-react'
 import debounce from 'lodash.debounce'
 import { TemplateFilter } from './template-filter'
@@ -20,8 +16,13 @@ import {
     TabsContent,
     TabsList,
     TabsTrigger,
-} from '../../../shared/components/ui/tabs'
+} from '../../../components/ui/tabs'
 import { AssetMapContainer } from './asset-map-container'
+import { useMainHierarchyFilterContext } from '@/context/main-hierarchy-items-filter-context'
+import { type Template } from '@/types/template'
+import { type AssetWithTemplate } from '@/types/asset'
+import { useAssetDataTable } from '@/hooks/use-data-table'
+import { useGetMapLayersQuery } from '@/features/templates/services/templates'
 
 export function AssetTableContainer({ templates }: { templates: Template[] }) {
     const { selectedHierarchyItems } = useMainHierarchyFilterContext()
@@ -168,6 +169,8 @@ function AssetTable({
         }>
     >
 }) {
+    const { data: mapLayers } = useGetMapLayersQuery()
+
     const { table } = useAssetDataTable({
         data,
         columns: assetColumns,
@@ -209,7 +212,9 @@ function AssetTable({
                 </TabsContent>
 
                 <TabsContent value="map">
-                    <AssetMapContainer />
+                    {mapLayers != null && (
+                        <AssetMapContainer mapLayers={mapLayers} />
+                    )}
                 </TabsContent>
             </Tabs>
         </div>

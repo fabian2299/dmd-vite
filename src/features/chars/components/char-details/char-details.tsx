@@ -1,22 +1,19 @@
-import { Button } from '../../../../shared/components/ui/button'
+import { Button } from '../../../../components/ui/button'
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-} from '../../../../shared/components/ui/tabs'
+} from '../../../../components/ui/tabs'
 import { CharDetailsMain } from './char-details-main'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type Characteristic } from '../../../../shared/types/characteristic'
-import { Form } from '../../../../shared/components/ui/form'
-import { toast } from '../../../../shared/components/ui/use-toast'
-import { useModalContext } from '../../../../shared/context/modal-context'
+import { type Characteristic } from '@/types/characteristic'
+import { Form } from '../../../../components/ui/form'
+import { toast } from '../../../../components/ui/use-toast'
+import { useModalContext } from '@/context/modal-context'
 import { useNavigate } from 'react-router-dom'
-import {
-    type ErrorHandlerMap,
-    ErrorTypeEnum,
-} from '../../../../shared/lib/errors'
+import { type ErrorHandlerMap, ErrorTypeEnum } from '@/lib/errors'
 import { useUpdateCharMutation } from '../../services/chars'
 import { Loader2 } from 'lucide-react'
 import { CharDetailsClasses } from './char-details-classes'
@@ -28,15 +25,15 @@ import {
     selectCharDTO,
     setCharDTO,
 } from '../../slices/charFormSlice'
-import { useAppDispatch, useAppSelector } from '../../../../shared/store/hooks'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '../../../../shared/components/ui/tooltip'
+} from '../../../../components/ui/tooltip'
 import { type AxiosError } from 'axios'
-import { cn } from '../../../../shared/utils/utils'
+import { cn } from '@/utils/utils'
 
 interface CharDetailsProps {
     char: Characteristic

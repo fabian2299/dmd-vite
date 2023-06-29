@@ -1,6 +1,6 @@
 import { Edit } from 'lucide-react'
-import { Button } from '../../../../shared/components/ui/button'
-import { useModalContext } from '../../../../shared/context/modal-context'
+import { Button } from '../../../../components/ui/button'
+import { useModalContext } from '@/context/modal-context'
 import { useNavigate } from 'react-router-dom'
 import { usePrefetch } from '../../services/templates'
 import { DeleteTemplate } from './delete-template'

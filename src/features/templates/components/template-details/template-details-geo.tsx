@@ -4,9 +4,9 @@ import {
     usePublishLayerMutation,
     useUnpublishLayerMutation,
 } from '../../services/templates'
-import { type Template } from '../../../../shared/types/template'
-import { toast } from '../../../../shared/components/ui/use-toast'
-import { Button } from '../../../../shared/components/ui/button'
+import { type Template } from '@/types/template'
+import { toast } from '../../../../components/ui/use-toast'
+import { Button } from '../../../../components/ui/button'
 import { useState } from 'react'
 import {
     Select,
@@ -14,7 +14,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '../../../../shared/components/ui/select'
+} from '../../../../components/ui/select'
 import { Loader2 } from 'lucide-react'
 
 export function TemplateDetailsGeo() {

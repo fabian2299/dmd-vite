@@ -6,9 +6,10 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type MapBrowserEvent } from 'ol'
-import { useMapContext } from '../../../shared/context/map/map-context'
 import { type GOMap } from '@goaigua/go-gisapi'
-import { Button } from '../../../shared/components/ui/button'
+import { Button } from '../../../components/ui/button'
+import { useMapContext } from '@/context/map/map-context'
+import { useGetTemplatesQuery } from '@/features/templates/services/templates'
 
 export function AssetMap({ assetMap }: { assetMap: GOMap }) {
     const {
@@ -35,17 +36,22 @@ export function AssetMap({ assetMap }: { assetMap: GOMap }) {
         setIsOpenIntersectForm,
     } = useMapContext()
 
+    const { data: templates } = useGetTemplatesQuery()
+
     const [isIntersectOpenMenu, setIsIntersectOpenMenu] = useState(false)
 
     // make layers visible when map is loaded
     useEffect(() => {
+        if (templates == null) return
+        const templatesCopy = structuredClone(templates)
+
         const getLayers = async () => {
             const layers = await assetMap.getLayers(MAP_ID)
-            addCqlFilterToLayers(layers)
+            addCqlFilterToLayers(layers, templatesCopy)
         }
 
         getLayers()
-    }, [assetMap, addCqlFilterToLayers, MAP_ID])
+    }, [assetMap, addCqlFilterToLayers, MAP_ID, templates])
 
     // highlight selected assets
     useEffect(() => {
@@ -53,7 +59,7 @@ export function AssetMap({ assetMap }: { assetMap: GOMap }) {
             assetMap.interactions.removeHighlight(MAP_ID, 'myHighlightCluster')
         }
 
-        if (assetMap?.interactions.hasHighlight(MAP_ID, 'highlightClusterID')) {
+        if (assetMap.interactions.hasHighlight(MAP_ID, 'highlightClusterID')) {
             assetMap.interactions.removeHighlight(MAP_ID, 'highlightClusterID')
         }
 

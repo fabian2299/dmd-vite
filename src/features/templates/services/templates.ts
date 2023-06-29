@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { axiosBaseQuery } from '../../../shared/lib/axios-base-query'
-import { type Template } from '../../../shared/types/template'
+import { axiosBaseQuery } from '@/lib/axios-base-query'
+import { type Template } from '@/types/template'
+import { type GOLayer } from '@goaigua/go-gisapi'
 
 export const templateApi = createApi({
     reducerPath: 'templateApi',
@@ -9,7 +10,7 @@ export const templateApi = createApi({
             'https://gateway-proxy.dev.idrica.pro/inventory-service/api/v1/',
     }),
     refetchOnReconnect: true,
-    refetchOnMountOrArgChange: true,
+    refetchOnMountOrArgChange: 30,
     tagTypes: ['Template'],
     endpoints: (builder) => ({
         // Queries
@@ -34,6 +35,12 @@ export const templateApi = createApi({
                 method: 'GET',
             }),
             providesTags: (_result, _error, id) => [{ type: 'Template', id }],
+        }),
+        getMapLayers: builder.query<GOLayer[], void>({
+            query: () => ({
+                url: 'portal/layers/assigned/',
+                method: 'GET',
+            }),
         }),
         // Mutations
         createTemplate: builder.mutation<Template, Template>({
@@ -99,11 +106,10 @@ export const templateApi = createApi({
     }),
 })
 
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
 export const {
     useGetTemplatesQuery,
     useGetTemplateByIdQuery,
+    useGetMapLayersQuery,
     usePrefetch,
     useCreateTemplateMutation,
     useUpdateTemplateMutation,
