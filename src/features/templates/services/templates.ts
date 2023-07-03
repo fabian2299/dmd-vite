@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from '@/lib/axios-base-query'
 import { type Template } from '@/types/template'
 import { type GOLayer } from '@goaigua/go-gisapi'
+import { type TemplateDTO } from '@/features/templates/slices/templateFormSlice'
 
 export const templateApi = createApi({
     reducerPath: 'templateApi',
@@ -43,7 +44,7 @@ export const templateApi = createApi({
             }),
         }),
         // Mutations
-        createTemplate: builder.mutation<Template, Template>({
+        createTemplate: builder.mutation<Template, TemplateDTO>({
             query(body) {
                 return {
                     url: `template/`,
@@ -55,7 +56,7 @@ export const templateApi = createApi({
             },
             invalidatesTags: [{ type: 'Template', id: 'LIST' }],
         }),
-        updateTemplate: builder.mutation<Template, Template>({
+        updateTemplate: builder.mutation<Template, TemplateDTO>({
             query(body) {
                 return {
                     url: `template/`,

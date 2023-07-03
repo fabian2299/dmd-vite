@@ -21,13 +21,13 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '../../../../components/ui/tooltip'
-import { type AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { cn } from '@/utils/utils'
 import { type Class } from '@/types/class'
 import { useUpdateClassMutation } from '../../services/classes'
 import {
     type UpdateClassDTO,
-    classFormSchema,
+    ClassFormSchema,
     selectClassDTO,
     resetClassDTO,
     setClassDTO,
@@ -48,14 +48,16 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
     const prefetchChars = usePrefetch('getChars')
 
     const form = useForm<UpdateClassDTO>({
-        resolver: zodResolver(classFormSchema),
+        resolver: zodResolver(ClassFormSchema),
         defaultValues: {
-            charIds: classObj.characteristics.map((char) => char.id.toString()),
+            id: classObj.id,
             name: classObj.name,
             description: classObj.description,
             shortDescription: classObj.shortDescription,
-            id: classObj.id,
-            mainClass: classObj.isMainClass ?? false,
+            isMainClass: classObj.isMainClass ?? false,
+            characteristics: classObj.characteristics.map((char) => ({
+                id: char.id,
+            })),
         },
     })
     const dispatch = useAppDispatch()
@@ -65,19 +67,19 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
     const description = form.watch('description')
     const shortDescription = form.watch('shortDescription')
     const id = form.watch('id')
-    const charIds = form.watch('charIds')
-    const mainClass = form.watch('mainClass')
+    const characteristics = form.watch('characteristics')
+    const isMainClass = form.watch('isMainClass')
 
     const formValues = useMemo(
         () => ({
             name,
             description,
             shortDescription,
-            charIds,
+            characteristics,
             id,
-            mainClass,
+            isMainClass,
         }),
-        [name, description, shortDescription, charIds, id, mainClass]
+        [name, description, shortDescription, characteristics, id, isMainClass]
     )
 
     const onSubmit = async () => {
@@ -91,8 +93,12 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
             dispatch(resetClassDTO())
             navigate('/resources/classes')
         } catch (error: unknown) {
-            const errType = (error as AxiosError).name as ErrorTypeEnum
-            errorHandler[errType]()
+            if (error instanceof AxiosError) {
+                const errType = error.name as ErrorTypeEnum
+                errorHandler[errType]()
+            } else {
+                errorHandler.DefaultError()
+            }
         }
     }
 
@@ -123,8 +129,8 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 
     const isFormFull = useMemo(
-        () => name?.length > 0 && charIds?.length > 0,
-        [charIds?.length, name?.length]
+        () => name.length > 0 && characteristics.length > 0,
+        [characteristics?.length, name.length]
     )
 
     useEffect(() => {
@@ -135,8 +141,13 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
 
     useEffect(() => {
         if (!isModalOpen) return
-        dispatch(setClassDTO(formValues))
-    }, [formValues, dispatch, isModalOpen])
+        dispatch(
+            setClassDTO({
+                ...classObj,
+                ...formValues,
+            })
+        )
+    }, [formValues, dispatch, isModalOpen, classObj])
 
     useEffect(() => {
         let timeoutId: ReturnType<typeof setTimeout>
@@ -175,7 +186,6 @@ export function ClassDetails({ classObj }: ClassDetailsProps) {
             <div className="h-full">
                 <Form {...form}>
                     <form
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="flex h-full flex-col justify-between"
                     >

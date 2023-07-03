@@ -3,7 +3,7 @@ import { useCreateClassMutation } from '../../services/classes'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
     type CreateClassDTO,
-    classFormSchema,
+    ClassFormSchema,
     selectClassDTO,
     setClassDTO,
     resetClassDTO,
@@ -47,11 +47,11 @@ export function CreateClass() {
     const classDTO = useAppSelector(selectClassDTO)
 
     const form = useForm<CreateClassDTO>({
-        resolver: zodResolver(classFormSchema),
+        resolver: zodResolver(ClassFormSchema),
         defaultValues: {
             name: '',
-            mainClass: false,
-            charIds: [],
+            isMainClass: false,
+            characteristics: [],
             description: '',
             shortDescription: '',
         },
@@ -60,23 +60,23 @@ export function CreateClass() {
     const name = form.watch('name')
     const description = form.watch('description')
     const shortDescription = form.watch('shortDescription')
-    const charIds = form.watch('charIds')
-    const mainClass = form.watch('mainClass')
+    const characteristics = form.watch('characteristics')
+    const isMainClass = form.watch('isMainClass')
 
     const formValues = useMemo(
         () => ({
             name,
-            charIds,
+            characteristics,
             description,
             shortDescription,
-            mainClass,
+            isMainClass,
         }),
-        [name, charIds, description, shortDescription, mainClass]
+        [name, characteristics, description, shortDescription, isMainClass]
     )
 
     useEffect(() => {
         if (!open) return
-        dispatch(setClassDTO({ ...formValues, id: -1 }))
+        dispatch(setClassDTO(formValues))
     }, [formValues, dispatch, open])
 
     useEffect(() => {
@@ -86,7 +86,7 @@ export function CreateClass() {
     }, [dispatch, form, open])
 
     const onSubmit = async () => {
-        if (charIds.length === 0) {
+        if (characteristics.length === 0) {
             toast({
                 title: 'No chars selected',
                 description: 'Please select at least one char',
@@ -98,7 +98,7 @@ export function CreateClass() {
         try {
             await createClass(classDTO).unwrap()
             toast({
-                title: `Class ${classDTO.name} created`,
+                title: `Class ${name} created`,
                 description: 'Class created successfully',
             })
 
@@ -106,6 +106,7 @@ export function CreateClass() {
             form.reset()
             setOpen(false)
         } catch (error: unknown) {
+            console.log('error', error)
             const errType = (error as AxiosError).name as ErrorTypeEnum
             errorHandler[errType]()
         }
@@ -115,21 +116,14 @@ export function CreateClass() {
         [ErrorTypeEnum.DuplicateNameException]: () => {
             toast({
                 title: 'Duplicate name',
-                description: 'Char name already exists',
-                variant: 'destructive',
-            })
-        },
-        [ErrorTypeEnum.InsufficientPermissionsException]: () => {
-            toast({
-                title: 'Insufficient permissions',
-                description: 'You do not have permissions to update this char',
+                description: 'Class name already exists',
                 variant: 'destructive',
             })
         },
         [ErrorTypeEnum.DefaultError]: () => {
             toast({
                 title: 'Error',
-                description: 'An error occurred while updating the char',
+                description: 'An error occurred while updating the class',
                 variant: 'destructive',
             })
         },
@@ -138,8 +132,8 @@ export function CreateClass() {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 
     const isFormFull = useMemo(
-        () => name.length > 0 && charIds.length > 0,
-        [charIds.length, name.length]
+        () => name.length > 0 && characteristics.length > 0,
+        [characteristics.length, name.length]
     )
 
     useEffect(() => {

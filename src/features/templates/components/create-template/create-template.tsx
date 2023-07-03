@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from '../../../../components/ui/use-toast'
-import { type AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { type ErrorHandlerMap, ErrorTypeEnum } from '@/lib/errors'
 import {
     Dialog,
@@ -33,10 +33,9 @@ import {
     resetTemplateDTO,
     selectTemplateDTO,
     setTemplateDTO,
-    templateFormSchema,
+    TemplateFormSchema,
 } from '../../slices/templateFormSlice'
 import { usePrefetch } from '../../../classes/services/classes'
-import { GeometryType } from '@/types/template'
 import { CreateTemplateMain } from './create-template-main'
 import { CreateTemplateClasses } from './create-template-classes'
 
@@ -49,36 +48,42 @@ export function CreateTemplate() {
     const templateDTO = useAppSelector(selectTemplateDTO)
 
     const form = useForm<CreateTemplateDTO>({
-        resolver: zodResolver(templateFormSchema),
+        resolver: zodResolver(TemplateFormSchema),
         defaultValues: {
-            classesIds: [],
+            classImplementations: [],
             name: '',
             description: '',
             shortDescription: '',
-            geometryType: GeometryType.Point,
+            geometryType: 'Point',
         },
     })
 
     const name = form.watch('name')
     const description = form.watch('description')
     const shortDescription = form.watch('shortDescription')
-    const classesIds = form.watch('classesIds')
+    const classImplementations = form.watch('classImplementations')
     const geometryType = form.watch('geometryType')
 
     const formValues = useMemo(
         () => ({
             name,
-            classesIds,
+            classImplementations,
             description,
             shortDescription,
             geometryType,
         }),
-        [name, classesIds, description, shortDescription, geometryType]
+        [
+            name,
+            classImplementations,
+            description,
+            shortDescription,
+            geometryType,
+        ]
     )
 
     useEffect(() => {
         if (!open) return
-        dispatch(setTemplateDTO({ ...formValues, id: -1 }))
+        dispatch(setTemplateDTO(formValues))
     }, [formValues, dispatch, open])
 
     useEffect(() => {
@@ -88,10 +93,10 @@ export function CreateTemplate() {
     }, [dispatch, form, open])
 
     const onSubmit = async () => {
-        if (classesIds.length === 0) {
+        if (classImplementations.length === 0) {
             toast({
-                title: 'No chars selected',
-                description: 'Please select at least one char',
+                title: 'No class selected',
+                description: 'Please select at least one class',
                 variant: 'destructive',
             })
             return
@@ -108,8 +113,12 @@ export function CreateTemplate() {
             form.reset()
             setOpen(false)
         } catch (error: unknown) {
-            const errType = (error as AxiosError).name as ErrorTypeEnum
-            errorHandler[errType]()
+            if (error instanceof AxiosError) {
+                const errType = error.name as ErrorTypeEnum
+                errorHandler[errType]()
+            } else {
+                errorHandler.DefaultError()
+            }
         }
     }
 
@@ -118,13 +127,6 @@ export function CreateTemplate() {
             toast({
                 title: 'Duplicate name',
                 description: 'Char name already exists',
-                variant: 'destructive',
-            })
-        },
-        [ErrorTypeEnum.InsufficientPermissionsException]: () => {
-            toast({
-                title: 'Insufficient permissions',
-                description: 'You do not have permissions to update this char',
                 variant: 'destructive',
             })
         },
@@ -140,8 +142,8 @@ export function CreateTemplate() {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 
     const isFormFull = useMemo(
-        () => name.length > 0 && classesIds.length > 0,
-        [classesIds.length, name.length]
+        () => name.length > 0 && classImplementations.length > 0,
+        [classImplementations.length, name.length]
     )
 
     useEffect(() => {

@@ -37,5 +37,6 @@ module.exports = {
         'react/prop-types': 'off',
         '@typescript-eslint/no-misused-promises': 'off',
         '@typescript-eslint/no-invalid-void-type': 'off',
+        '@typescript-eslint/strict-boolean-expressions': 'off',
     },
 }

@@ -1,23 +1,38 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/store/store'
-import { TypeValues } from '@/types/characteristic'
-import type { Characteristic } from '@/types/characteristic'
+import {
+    type Characteristic,
+    CharacteristicSchema,
+} from '@/types/characteristic'
 import { z } from 'zod'
 
-interface CharFormState {
+export const CharFormSchema = z.object({
+    id: CharacteristicSchema.shape.id.optional(),
+    name: CharacteristicSchema.shape.name
+        .min(3, 'Name must contain at least 3 chars')
+        .max(51),
+    description: CharacteristicSchema.shape.description,
+    shortDescription: CharacteristicSchema.shape.shortDescription,
+    type: CharacteristicSchema.shape.type,
+})
+
+export type CreateCharDTO = Omit<z.infer<typeof CharFormSchema>, 'id'>
+export type UpdateCharDTO = z.infer<typeof CharFormSchema>
+type CharPayloadDTO = z.infer<typeof CharFormSchema>
+
+interface InitialState {
     charDTO: Characteristic
 }
 
-const initialState: CharFormState = {
+const initialState: InitialState = {
     charDTO: {
         id: -1,
         name: '',
-        type: TypeValues.String,
+        type: 'string',
         description: '',
         shortDescription: '',
         editable: true,
-        measureUnit: null,
         origin: '',
         options: [],
         tenantId: -1,
@@ -30,18 +45,6 @@ const initialState: CharFormState = {
         isModifiable: true,
     },
 }
-
-export const charFormSchema = z.object({
-    name: z.string().min(3, 'Name must contain at least 3 chars').max(51),
-    description: z.string(),
-    shortDescription: z.string(),
-    type: z.nativeEnum(TypeValues),
-    id: z.number().optional(),
-})
-
-export type CreateCharDTO = Omit<z.infer<typeof charFormSchema>, 'id'>
-export type UpdateCharDTO = z.infer<typeof charFormSchema>
-type CharPayloadDTO = z.infer<typeof charFormSchema>
 
 export const charFormSlice = createSlice({
     name: 'charForm',

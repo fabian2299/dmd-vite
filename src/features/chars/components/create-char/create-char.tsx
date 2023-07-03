@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { TypeValues } from '@/types/characteristic'
 import { toast } from '../../../../components/ui/use-toast'
 import {
     Dialog,
@@ -30,7 +29,7 @@ import { type ErrorHandlerMap, ErrorTypeEnum } from '@/lib/errors'
 import { useCreateCharMutation } from '../../services/chars'
 import {
     type CreateCharDTO,
-    charFormSchema,
+    CharFormSchema,
     resetCharDTO,
     selectCharDTO,
     setCharDTO,
@@ -42,8 +41,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '../../../../components/ui/tooltip'
-import { type AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { cn } from '@/utils/utils'
+import { Type } from '@/types/characteristic'
+import { capitalize } from '../../../../utils/utils'
 
 export function CreateChar() {
     const [open, setOpen] = useState(false)
@@ -53,10 +54,10 @@ export function CreateChar() {
     const charDTO = useAppSelector(selectCharDTO)
 
     const form = useForm<CreateCharDTO>({
-        resolver: zodResolver(charFormSchema),
+        resolver: zodResolver(CharFormSchema),
         defaultValues: {
             name: '',
-            type: TypeValues.String,
+            type: 'string',
             description: '',
             shortDescription: '',
         },
@@ -77,11 +78,13 @@ export function CreateChar() {
         [name, type, description, shortDescription]
     )
 
+    // send charDTO to redux on open modal
     useEffect(() => {
         if (!open) return
-        dispatch(setCharDTO({ ...formValues, id: -1 }))
-    }, [formValues, dispatch, open])
+        dispatch(setCharDTO(formValues))
+    }, [dispatch, formValues, open])
 
+    // reset charDTO and form on close modal
     useEffect(() => {
         if (open) return
         dispatch(resetCharDTO())
@@ -95,13 +98,14 @@ export function CreateChar() {
                 title: `Char ${charDTO.name} created`,
                 description: 'Char created successfully',
             })
-
-            dispatch(resetCharDTO())
-            form.reset()
             setOpen(false)
         } catch (error: unknown) {
-            const errType = (error as AxiosError).name as ErrorTypeEnum
-            errorHandler[errType]()
+            if (error instanceof AxiosError) {
+                const errType = error.name as ErrorTypeEnum
+                errorHandler[errType]()
+            } else {
+                errorHandler.DefaultError()
+            }
         }
     }
 
@@ -113,17 +117,10 @@ export function CreateChar() {
                 variant: 'destructive',
             })
         },
-        [ErrorTypeEnum.InsufficientPermissionsException]: () => {
-            toast({
-                title: 'Insufficient permissions',
-                description: 'You do not have permissions to update this char',
-                variant: 'destructive',
-            })
-        },
         [ErrorTypeEnum.DefaultError]: () => {
             toast({
                 title: 'Error',
-                description: 'An error occurred while updating the char',
+                description: 'An error occurred while creating the char',
                 variant: 'destructive',
             })
         },
@@ -218,12 +215,12 @@ export function CreateChar() {
                             name="type"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Geometry type (*)</FormLabel>
+                                    <FormLabel>Type (*)</FormLabel>
                                     <Select
                                         defaultValue={field.value}
                                         onValueChange={(value) => {
                                             field.onChange(
-                                                value as (typeof TypeValues)[keyof typeof TypeValues]
+                                                value as unknown as React.ChangeEvent<HTMLInputElement>
                                             )
                                         }}
                                     >
@@ -233,17 +230,14 @@ export function CreateChar() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {Object.values(TypeValues).map(
-                                                (value) => (
-                                                    <SelectItem
-                                                        key={value}
-                                                        value={value}
-                                                        className="capitalize"
-                                                    >
-                                                        {value}
-                                                    </SelectItem>
-                                                )
-                                            )}
+                                            {Type.options.map((type) => (
+                                                <SelectItem
+                                                    key={type}
+                                                    value={type}
+                                                >
+                                                    {capitalize(type)}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />

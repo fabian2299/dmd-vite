@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from '@/lib/axios-base-query'
 import { type Class } from '@/types/class'
+import { type ClassDTO } from '@/features/classes/slices/classFormSlice'
 
 export const classApi = createApi({
     reducerPath: 'classApi',
@@ -37,7 +38,7 @@ export const classApi = createApi({
             providesTags: (_result, _error, id) => [{ type: 'Class', id }],
         }),
         // Mutations
-        createClass: builder.mutation<Class, Class>({
+        createClass: builder.mutation<Class, ClassDTO>({
             query(body) {
                 return {
                     url: `class/`,
@@ -49,7 +50,7 @@ export const classApi = createApi({
             },
             invalidatesTags: [{ type: 'Class', id: 'LIST' }],
         }),
-        updateClass: builder.mutation<Class, Class>({
+        updateClass: builder.mutation<Class, ClassDTO>({
             query(body) {
                 return {
                     url: `class/`,

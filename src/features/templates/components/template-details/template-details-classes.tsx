@@ -12,12 +12,12 @@ import { Label } from '../../../../components/ui/label'
 import { useGetClassesQuery } from '../../../classes/services/classes'
 import { type Class } from '@/types/class'
 import { templateClassesColumns } from '../../utils/template-classes-columns'
-import { type CreateTemplateDTO } from '../../slices/templateFormSlice'
+import { type UpdateTemplateDTO } from '../../slices/templateFormSlice'
 
 export function TemplateDetailsClasses({
     form,
 }: {
-    form: UseFormReturn<CreateTemplateDTO, unknown, undefined>
+    form: UseFormReturn<UpdateTemplateDTO, unknown, undefined>
 }) {
     const { data: classes, isLoading } = useGetClassesQuery()
 
@@ -39,7 +39,7 @@ function ClassTable({
     form,
 }: {
     data: Class[]
-    form: UseFormReturn<CreateTemplateDTO, unknown, undefined>
+    form: UseFormReturn<UpdateTemplateDTO, unknown, undefined>
 }) {
     const { table, rowSelection, globalFilter, setGlobalFilter, columns } =
         useDataTable<Class>({
@@ -47,44 +47,30 @@ function ClassTable({
             columns: templateClassesColumns,
         })
 
-    // Compute selectedRows with useMemo
-    const selectedRows = useMemo(() => {
-        if (Object.values(rowSelection).length === 0) {
-            return []
-        }
-
-        return table
-            .getSelectedRowModel()
-            .rows.map((row) => row.original.id.toString())
-    }, [rowSelection, table])
-
-    // Update form value with useEffect
-    useEffect(() => {
-        form.setValue('classesIds', selectedRows)
-    }, [form, selectedRows])
-
     // set rowSelection with useEffect
     const rowsIndexObj = useMemo(() => {
-        const classesIds = form.getValues('classesIds')
-        if (classesIds.length === 0) return {}
+        const classImplementations = form.getValues('classImplementations')
+        if (classImplementations.length === 0) return {}
 
-        const selectedRows = classesIds.map((id) => id.toString())
+        const selectedRowIDs = classImplementations.map(
+            (classImplementation) => classImplementation.id
+        )
 
         const checkRows = table.getCoreRowModel().rows.filter((row) => {
-            return selectedRows
-                .map((id) => id)
-                .includes(row.original.id.toString())
+            return selectedRowIDs.includes(row.original.id)
         })
 
         const getRowIndex = (rowId: string) => {
             const row = table.getRow(rowId)
-            return row.index
+            return row ? row.index : -1 // returning -1 when row is null
         }
 
-        const rowsIndex = checkRows.map((row) => getRowIndex(row.id))
+        const rowsIndex = checkRows
+            .map((row) => getRowIndex(row.id))
+            .filter((index) => index !== -1)
 
         return rowsIndex
-            .map((index) => ({ [index]: true }))
+            .map((index) => (index !== null ? { [index]: true } : {}))
             .reduce((acc, cur) => {
                 return { ...acc, ...cur }
             }, {})
@@ -96,6 +82,22 @@ function ClassTable({
             table.setRowSelection(rowsIndexObj)
         }
     }, [table, rowsIndexObj])
+
+    // Compute selectedRows with useMemo
+    const selectedRows: Array<{ id: number }> = useMemo(() => {
+        if (Object.values(rowSelection).length === 0) {
+            return []
+        }
+
+        return table
+            .getSelectedRowModel()
+            .rows.map((row) => ({ id: row.original.id }))
+    }, [rowSelection, table])
+
+    // Update form value with useEffect
+    useEffect(() => {
+        form.setValue('classImplementations', selectedRows)
+    }, [form, selectedRows])
 
     const handleFilterChange = (value: boolean | string) => {
         if (typeof value === 'boolean') {

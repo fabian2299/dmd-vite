@@ -74,9 +74,11 @@ export function TemplateDetailsMain({
                     <FormItem>
                         <FormLabel>Geometry type (*)</FormLabel>
                         <Select
-                            // @ts-expect-error TODO: fix this
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            onValueChange={(value) => {
+                                value as unknown as React.ChangeEvent<HTMLInputElement>
+                            }}
+                            value={field.value ?? GeometryType.options[0]}
+                            disabled
                         >
                             <FormControl>
                                 <SelectTrigger>
@@ -84,7 +86,7 @@ export function TemplateDetailsMain({
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {Object.values(GeometryType).map((value) => (
+                                {GeometryType.options.map((value) => (
                                     <SelectItem key={value} value={value}>
                                         {value}
                                     </SelectItem>

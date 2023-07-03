@@ -12,14 +12,13 @@ export function AssetMapContainer({ mapLayers }: { mapLayers: GOLayer[] }) {
         TOC_ID,
         isTocDisplayed,
         isLoading,
-        generateMap,
         assetMap,
+        generateMap,
         setAssetMap,
     } = useMapContext()
 
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        generateMap(mapLayersCopy)
+        void generateMap(mapLayersCopy)
 
         return () => {
             setAssetMap(undefined)

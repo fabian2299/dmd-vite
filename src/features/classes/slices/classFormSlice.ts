@@ -2,21 +2,43 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/store/store'
 import { z } from 'zod'
-import { type Class } from '@/types/class'
+import { ClassSchema } from '@/types/class'
 
-interface ClassFormState {
-    classDTO: Class
+const ClassDTOSchema = ClassSchema.extend({
+    characteristics: z.array(z.object({ id: z.number() })),
+})
+
+export type ClassDTO = Partial<z.infer<typeof ClassDTOSchema>>
+
+export const ClassFormSchema = z.object({
+    id: ClassDTOSchema.shape.id.optional(),
+    name: ClassDTOSchema.shape.name
+        .min(3, 'Name must contain at least 3 chars')
+        .max(51),
+    description: ClassDTOSchema.shape.description,
+    shortDescription: ClassDTOSchema.shape.shortDescription,
+    isMainClass: ClassDTOSchema.shape.isMainClass,
+    characteristics: ClassDTOSchema.shape.characteristics,
+})
+
+export type CreateClassDTO = Omit<z.infer<typeof ClassFormSchema>, 'id'>
+export type UpdateClassDTO = z.infer<typeof ClassFormSchema>
+
+interface InitialState {
+    classDTO: ClassDTO
 }
 
-const initialState: ClassFormState = {
+const initialState: InitialState = {
     classDTO: {
+        // user input
+        id: -1,
         name: '',
         description: '',
         shortDescription: '',
         isMainClass: false,
-        active: true,
-        id: -1,
         characteristics: [],
+        // not user input
+        active: true,
         isDeleteable: true,
         isDeleted: false,
         isModifiable: true,
@@ -27,33 +49,16 @@ const initialState: ClassFormState = {
     },
 }
 
-export const classFormSchema = z.object({
-    name: z.string().min(3, 'Name must contain at least 3 chars').max(51),
-    description: z.string(),
-    shortDescription: z.string(),
-    mainClass: z.boolean(),
-    charIds: z.array(z.string()),
-    id: z.number().optional(),
-})
-
-export type CreateClassDTO = Omit<z.infer<typeof classFormSchema>, 'id'>
-export type UpdateClassDTO = z.infer<typeof classFormSchema>
-
-type ClassPayloadDTO = z.infer<typeof classFormSchema>
-
 export const classFormSlice = createSlice({
     name: 'classForm',
     initialState,
     reducers: {
-        setClassDTO: (state, action: PayloadAction<ClassPayloadDTO>) => {
-            const { charIds, mainClass, ...rest } = action.payload
+        setClassDTO: (state, action: PayloadAction<ClassDTO>) => {
+            const { characteristics, ...rest } = action.payload
             state.classDTO = {
                 ...state.classDTO,
                 ...rest,
-                isMainClass: mainClass,
-                characteristics: charIds.map((id) => ({
-                    id: parseInt(id),
-                })),
+                characteristics: characteristics?.map(({ id }) => ({ id })),
             }
         },
         resetClassDTO: (state) => {

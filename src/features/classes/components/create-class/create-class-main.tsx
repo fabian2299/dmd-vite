@@ -61,16 +61,15 @@ export function CreateClassMain({
 
             <FormField
                 control={form.control}
-                name="mainClass"
+                name="isMainClass"
                 render={({ field }) => (
                     <FormItem>
                         <div className="flex items-center gap-4">
                             <FormControl>
                                 <Checkbox
-                                    checked={field.value}
+                                    checked={field.value ?? false}
                                     onCheckedChange={(value) => {
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        field.onChange(value as any)
+                                        field.onChange(!!value)
                                     }}
                                 />
                             </FormControl>

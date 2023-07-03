@@ -1,96 +1,85 @@
-export interface Characteristic {
-    id: number
-    type: Type
-    tenantId?: number | null
-    description: string
-    shortDescription: string
-    origin?: null | string
-    code?: null | string
-    editable?: boolean | null
-    isRefCharacteristic?: boolean | null
-    isDeleted: boolean
-    isDeleteable: boolean
-    isModifiable: boolean
-    name: string
-    options?: string[] | null
-    refCharacteristic?: null
-    classImplementations: ClassImplementation[]
-    measureUnit?: MeasureUnit | null
-}
+import { z } from 'zod'
+import {
+    NullableBoolean,
+    NullableNumber,
+    NullableString,
+    NullableStringArray,
+} from '@/types/types'
 
-export interface ClassImplementation {
-    id: number
-    tenandId: number | null
-    description: string
-    shortDescription: string
-    active: boolean | null
-    origen: null | string
-    name: string
-    isMainClass: boolean | null
-    isDeleted: boolean | null
-    code: null | string
-    isDeleteable: boolean | null
-    isModifiable: boolean | null
-    characteristics: null
-    template: Template[]
-}
+const GeometryType = z.enum([
+    'LineString',
+    'MultiLineString',
+    'MultiPolygon',
+    'Point',
+    'Polygon',
+])
 
-export interface Template {
-    id: number
-    tenandId: number | null
-    description: string
-    shortDescription: string
-    geometryType: GeometryType | null
-    active: boolean | null
-    origen: null | string
-    externalCode: null | string
-    name: string
-    layerName: null | string
-    code: null | string
-    isDeleted: boolean | null
-    isDeleteable: boolean | null
-    isModifiable: boolean | null
-    portalLayerId: number | null
-    classImplementations: null
-    mainClassImplementation: null
-}
+export const Type = z.enum([
+    'boolean',
+    'string',
+    'double',
+    'integer',
+    'date',
+    'multioption',
+    'iotsignal',
+    'iotsynoptic',
+])
 
-export enum GeometryType {
-    LineString = 'LineString',
-    MultiLineString = 'MultiLineString',
-    MultiPolygon = 'MultiPolygon',
-    Point = 'Point',
-    Polygon = 'Polygon',
-}
+const Template = z.object({
+    id: z.number(),
+    tenandId: NullableNumber,
+    description: z.string(),
+    shortDescription: z.string(),
+    geometryType: z.union([GeometryType, z.null()]),
+    active: NullableBoolean,
+    origen: NullableString,
+    externalCode: NullableString,
+    name: z.string(),
+    layerName: NullableString,
+    code: NullableString,
+    isDeleted: NullableBoolean,
+    isDeleteable: NullableBoolean,
+    isModifiable: NullableBoolean,
+    portalLayerId: NullableNumber,
+    classImplementations: z.null(),
+    mainClassImplementation: z.null(),
+})
 
-export interface MeasureUnit {
-    id: number
-    unit: string
-    magnitude: Magnitude
-    translationFactor: number
-    defaultMeasureUnit: MeasureUnit | null
-    measureSystem: Magnitude
-}
+const ClassImplementationSchema = z.object({
+    id: z.number(),
+    tenandId: NullableNumber,
+    description: NullableString,
+    shortDescription: NullableString,
+    active: NullableBoolean,
+    origen: NullableString,
+    name: NullableString,
+    isMainClass: NullableBoolean,
+    isDeleted: NullableBoolean,
+    code: NullableString,
+    isDeleteable: NullableBoolean,
+    isModifiable: NullableBoolean,
+    characteristics: z.null(),
+    template: z.array(Template),
+})
 
-export interface Magnitude {
-    id: number
-    name: Name
-}
+export const CharacteristicSchema = z.object({
+    id: z.number(),
+    type: Type,
+    tenantId: NullableNumber,
+    description: z.string(),
+    shortDescription: z.string(),
+    origin: NullableString,
+    code: NullableString,
+    editable: NullableBoolean,
+    isRefCharacteristic: NullableBoolean,
+    isDeleted: z.boolean(),
+    isDeleteable: z.boolean(),
+    isModifiable: z.boolean(),
+    name: z.string(),
+    options: NullableStringArray,
+    refCharacteristic: z.null(),
+    classImplementations: z.array(ClassImplementationSchema),
+})
 
-export enum Name {
-    Distancia = 'Distancia',
-    Si = 'SI',
-}
-
-export const TypeValues = {
-    Boolean: 'boolean',
-    Date: 'date',
-    Double: 'double',
-    Integer: 'integer',
-    Iotsignal: 'iotsignal',
-    Iotsynoptic: 'iotsynoptic',
-    Multioption: 'multioption',
-    String: 'string',
-} as const
-
-type Type = (typeof TypeValues)[keyof typeof TypeValues]
+export type ClassImplementation = z.infer<typeof ClassImplementationSchema>
+export type Characteristic = z.infer<typeof CharacteristicSchema>

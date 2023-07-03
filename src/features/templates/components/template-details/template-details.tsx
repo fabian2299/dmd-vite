@@ -23,11 +23,11 @@ import {
 } from '../../../../components/ui/tooltip'
 import { type AxiosError } from 'axios'
 import { cn } from '@/utils/utils'
-import { GeometryType, type Template } from '@/types/template'
+import { type Template } from '@/types/template'
 import { useUpdateTemplateMutation } from '../../services/templates'
 import {
     type UpdateTemplateDTO,
-    templateFormSchema,
+    TemplateFormSchema,
     selectTemplateDTO,
     resetTemplateDTO,
     setTemplateDTO,
@@ -49,16 +49,18 @@ export function TemplateDetails({ template }: TemplateDetailsProps) {
         useUpdateTemplateMutation()
 
     const form = useForm<UpdateTemplateDTO>({
-        resolver: zodResolver(templateFormSchema),
+        resolver: zodResolver(TemplateFormSchema),
         defaultValues: {
-            classesIds: template.classImplementations.map((classObj) =>
-                classObj.id.toString()
-            ),
+            id: template.id,
             name: template.name,
             description: template.description,
             shortDescription: template.shortDescription,
-            id: template.id,
-            geometryType: template.geometryType ?? GeometryType.Point,
+            geometryType: template.geometryType ?? 'Point',
+            classImplementations: template.classImplementations.map(
+                (classImplementation) => ({
+                    id: classImplementation.id,
+                })
+            ),
         },
     })
     const dispatch = useAppDispatch()
@@ -68,7 +70,7 @@ export function TemplateDetails({ template }: TemplateDetailsProps) {
     const description = form.watch('description')
     const shortDescription = form.watch('shortDescription')
     const id = form.watch('id')
-    const classesIds = form.watch('classesIds')
+    const classImplementations = form.watch('classImplementations')
     const geometryType = form.watch('geometryType')
 
     const formValues = useMemo(
@@ -77,15 +79,25 @@ export function TemplateDetails({ template }: TemplateDetailsProps) {
             description,
             shortDescription,
             id,
-            classesIds,
+            classImplementations,
             geometryType,
         }),
-        [name, description, shortDescription, id, classesIds, geometryType]
+        [
+            name,
+            description,
+            shortDescription,
+            id,
+            classImplementations,
+            geometryType,
+        ]
     )
 
     const onSubmit = async () => {
         try {
-            await updateTemplate(templateDTO).unwrap()
+            await updateTemplate({
+                ...template,
+                ...templateDTO,
+            }).unwrap()
             toast({
                 title: 'Template updated',
                 description: 'Template updated successfully',
@@ -126,8 +138,8 @@ export function TemplateDetails({ template }: TemplateDetailsProps) {
     const [isTooltipOpen, setIsTooltipOpen] = useState(false)
 
     const isFormFull = useMemo(
-        () => name?.length > 0 && classesIds?.length > 0,
-        [classesIds?.length, name?.length]
+        () => name.length > 0 && classImplementations.length > 0,
+        [classImplementations.length, name.length]
     )
 
     useEffect(() => {
@@ -187,7 +199,6 @@ export function TemplateDetails({ template }: TemplateDetailsProps) {
             <div className="h-full">
                 <Form {...form}>
                     <form
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="flex h-full flex-col justify-between"
                     >

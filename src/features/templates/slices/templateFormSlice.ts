@@ -2,24 +2,48 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '@/store/store'
 import { z } from 'zod'
-import { GeometryType, type Template } from '@/types/template'
+import { TemplateSchema } from '@/types/template'
 
-interface TemplateFormState {
-    templateDTO: Template
+const TemplateDTOSchema = TemplateSchema.extend({
+    classImplementations: z.array(z.object({ id: z.number() })),
+})
+
+export type TemplateDTO = z.infer<typeof TemplateDTOSchema>
+
+export const TemplateFormSchema = z.object({
+    id: TemplateDTOSchema.shape.id.optional(),
+    name: TemplateDTOSchema.shape.name
+        .min(2, 'Name must contain at least 2 chars')
+        .max(51),
+    description: TemplateDTOSchema.shape.description,
+    shortDescription: TemplateDTOSchema.shape.shortDescription,
+    geometryType: TemplateDTOSchema.shape.geometryType,
+    classImplementations: TemplateDTOSchema.shape.classImplementations,
+})
+
+export type CreateTemplateDTO = Omit<z.infer<typeof TemplateFormSchema>, 'id'>
+export type UpdateTemplateDTO = z.infer<typeof TemplateFormSchema>
+
+type TemplatePayloadDTO = z.infer<typeof TemplateFormSchema>
+
+interface InitialState {
+    templateDTO: TemplateDTO
 }
 
-const initialState: TemplateFormState = {
+const initialState: InitialState = {
     templateDTO: {
-        geometryType: GeometryType.Point,
+        // user input
+        id: -1,
         name: '',
         description: ' ',
         shortDescription: '',
-        id: -1,
+        geometryType: 'Point',
+        classImplementations: [],
+        // not user input
         origen: '',
         layerName: '',
         tenandId: -1,
         active: true,
-        classImplementations: [],
         externalCode: '',
         code: null,
         isDeleteable: true,
@@ -30,32 +54,14 @@ const initialState: TemplateFormState = {
     },
 }
 
-export const templateFormSchema = z.object({
-    name: z.string().min(2, 'Name must contain at least 2 chars').max(51),
-    description: z.string(),
-    shortDescription: z.string(),
-    geometryType: z.nativeEnum(GeometryType),
-    id: z.number().optional(),
-    classesIds: z.array(z.string()),
-})
-
-export type CreateTemplateDTO = Omit<z.infer<typeof templateFormSchema>, 'id'>
-export type UpdateTemplateDTO = z.infer<typeof templateFormSchema>
-
-type TemplatePayloadDTO = z.infer<typeof templateFormSchema>
-
 export const templateFormSlice = createSlice({
     name: 'templateForm',
     initialState,
     reducers: {
         setTemplateDTO: (state, action: PayloadAction<TemplatePayloadDTO>) => {
-            const { classesIds, ...rest } = action.payload
             state.templateDTO = {
                 ...state.templateDTO,
-                ...rest,
-                classImplementations: classesIds.map((id) => ({
-                    id: parseInt(id),
-                })),
+                ...action.payload,
             }
         },
         resetTemplateDTO: (state) => {

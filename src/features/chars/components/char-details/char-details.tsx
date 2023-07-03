@@ -20,7 +20,7 @@ import { CharDetailsClasses } from './char-details-classes'
 import { useEffect, useMemo, useState } from 'react'
 import {
     type UpdateCharDTO,
-    charFormSchema,
+    CharFormSchema,
     resetCharDTO,
     selectCharDTO,
     setCharDTO,
@@ -32,7 +32,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '../../../../components/ui/tooltip'
-import { type AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { cn } from '@/utils/utils'
 
 interface CharDetailsProps {
@@ -46,7 +46,7 @@ export function CharDetails({ char }: CharDetailsProps) {
     const [updateChar, { isLoading: isUpdating }] = useUpdateCharMutation()
 
     const form = useForm<UpdateCharDTO>({
-        resolver: zodResolver(charFormSchema),
+        resolver: zodResolver(CharFormSchema),
         defaultValues: {
             name: char.name,
             type: char.type,
@@ -86,11 +86,14 @@ export function CharDetails({ char }: CharDetailsProps) {
                 description: 'Char updated successfully',
             })
             closeModal()
-            dispatch(resetCharDTO())
             navigate('/resources/chars')
         } catch (error: unknown) {
-            const errType = (error as AxiosError).name as ErrorTypeEnum
-            errorHandler[errType]()
+            if (error instanceof AxiosError) {
+                const errType = error.name as ErrorTypeEnum
+                errorHandler[errType]()
+            } else {
+                errorHandler.DefaultError()
+            }
         }
     }
 
@@ -126,15 +129,15 @@ export function CharDetails({ char }: CharDetailsProps) {
     )
 
     useEffect(() => {
+        if (!isModalOpen) return
+        dispatch(setCharDTO(formValues))
+    }, [formValues, dispatch, isModalOpen, form])
+
+    useEffect(() => {
         if (isModalOpen) return
         dispatch(resetCharDTO())
         form.reset()
-    }, [dispatch, form, isModalOpen])
-
-    useEffect(() => {
-        if (!isModalOpen) return
-        dispatch(setCharDTO(formValues))
-    }, [formValues, dispatch, isModalOpen])
+    }, [isModalOpen, dispatch, form])
 
     useEffect(() => {
         let timeoutId: ReturnType<typeof setTimeout>
@@ -166,7 +169,6 @@ export function CharDetails({ char }: CharDetailsProps) {
             <div className="h-full">
                 <Form {...form}>
                     <form
-                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="flex h-full flex-col justify-between"
                     >

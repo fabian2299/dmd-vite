@@ -1,5 +1,4 @@
 import { type UseFormReturn } from 'react-hook-form'
-import { type CreateClassDTO } from '../../slices/classFormSlice'
 import {
     FormControl,
     FormField,
@@ -9,11 +8,12 @@ import {
 } from '../../../../components/ui/form'
 import { Input } from '../../../../components/ui/input'
 import { Checkbox } from '../../../../components/ui/checkbox'
+import { type UpdateClassDTO } from '@/features/classes/slices/classFormSlice'
 
 export function ClassDetailsMain({
     form,
 }: {
-    form: UseFormReturn<CreateClassDTO, unknown, undefined>
+    form: UseFormReturn<UpdateClassDTO, unknown, undefined>
 }) {
     return (
         <div className="flex flex-col gap-8">
@@ -61,13 +61,13 @@ export function ClassDetailsMain({
 
             <FormField
                 control={form.control}
-                name="mainClass"
+                name="isMainClass"
                 render={({ field }) => (
                     <FormItem>
                         <div className="flex items-center gap-4">
                             <FormControl>
                                 <Checkbox
-                                    checked={field.value}
+                                    checked={field.value ?? false}
                                     onCheckedChange={(value) => {
                                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                         field.onChange(value as any)

@@ -48,32 +48,30 @@ function ClassTable({
         })
 
     // Compute selectedRows with useMemo
-    const selectedRows = useMemo(() => {
+    const selectedRows: Array<{ id: number }> = useMemo(() => {
         if (Object.values(rowSelection).length === 0) {
             return []
         }
 
         return table
             .getSelectedRowModel()
-            .rows.map((row) => row.original.id.toString())
+            .rows.map((row) => ({ id: row.original.id }))
     }, [rowSelection, table])
 
     // Update form value with useEffect
     useEffect(() => {
-        form.setValue('classesIds', selectedRows)
+        form.setValue('classImplementations', selectedRows)
     }, [form, selectedRows])
 
     // set rowSelection with useEffect
     const rowsIndexObj = useMemo(() => {
-        const classesIds = form.getValues('classesIds')
-        if (classesIds.length === 0) return {}
+        const classImplementations = form.getValues('classImplementations')
+        if (classImplementations.length === 0) return {}
 
-        const selectedRows = classesIds.map((id) => id.toString())
+        const selectedRows = classImplementations.map((c) => c.id)
 
         const checkRows = table.getCoreRowModel().rows.filter((row) => {
-            return selectedRows
-                .map((id) => id)
-                .includes(row.original.id.toString())
+            return selectedRows.includes(row.original.id)
         })
 
         const getRowIndex = (rowId: string) => {

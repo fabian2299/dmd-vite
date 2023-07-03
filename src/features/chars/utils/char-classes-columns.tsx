@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { type ColumnDef } from '@tanstack/react-table'
 import { type ClassImplementation } from '@/types/characteristic'
 import { Checkbox } from '../../../components/ui/checkbox'

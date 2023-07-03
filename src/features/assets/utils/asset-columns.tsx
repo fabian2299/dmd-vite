@@ -59,7 +59,7 @@ export const assetColumns: Array<ColumnDef<AssetWithTemplate>> = [
         header: 'Actions',
         cell: ({ cell }) => {
             const assetId = cell.row.original.id.toString()
-            return 'hola'
+            console.log('assetId', assetId)
 
             //   return <TemplateTableActions templateId={templateId} />
         },

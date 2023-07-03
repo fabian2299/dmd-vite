@@ -35,14 +35,17 @@ export const axiosBaseQuery =
         } catch (axiosError) {
             const err = axiosError as AxiosError & {
                 response: {
-                    data: { error: string }
+                    data: { error: string; code: string; message: string }
                 }
             }
 
             return {
-                status: err.response?.status,
-                data: err.response?.data ?? err.message,
-                name: err.response?.data?.error ?? ErrorTypeEnum.DefaultError,
+                error: {
+                    status: err.response?.status ?? 500,
+                    data: err.response?.data ?? err.message,
+                    name:
+                        err.response?.data?.error ?? ErrorTypeEnum.DefaultError,
+                },
             }
         }
     }

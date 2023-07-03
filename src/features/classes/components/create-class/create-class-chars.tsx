@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { type Characteristic } from '@/types/characteristic'
 import { Input } from '../../../../components/ui/input'
 import { DataTableViewOptions } from '../../../../components/table/data-table-view-options'
@@ -47,26 +47,31 @@ function CharTable({
             columns: classCharColumns,
         })
 
-    useEffect(() => {
-        if (Object.values(rowSelection).length === 0) return
+    // Compute selectedRows with useMemo
+    const selectedRows: Array<{ id: number }> = useMemo(() => {
+        if (Object.values(rowSelection).length === 0) {
+            return []
+        }
 
-        const selectedRows = table
+        return table
             .getSelectedRowModel()
-            .rows.map((row) => row.original.id.toString())
+            .rows.map((row) => ({ id: row.original.id }))
+    }, [rowSelection, table])
 
-        form.setValue('charIds', selectedRows)
-    }, [form, rowSelection, table])
-
+    // Update form value with useEffect
     useEffect(() => {
-        const charIds = form.getValues('charIds')
-        if (charIds.length === 0) return
+        form.setValue('characteristics', selectedRows)
+    }, [form, selectedRows])
 
-        const selectedRows = charIds.map((id) => id.toString())
+    // Compute rowsIndexObj with useMemo
+    const rowsIndexObj = useMemo(() => {
+        const characteristics = form.getValues('characteristics')
+        if (characteristics.length === 0) return {}
+
+        const selectedRows = characteristics.map((c) => c.id)
 
         const checkRows = table.getCoreRowModel().rows.filter((row) => {
-            return selectedRows
-                .map((id) => id)
-                .includes(row.original.id.toString())
+            return selectedRows.includes(row.original.id)
         })
 
         const getRowIndex = (rowId: string) => {
@@ -76,14 +81,17 @@ function CharTable({
 
         const rowsIndex = checkRows.map((row) => getRowIndex(row.id))
 
-        const rowsIndexObj = rowsIndex
+        return rowsIndex
             .map((index) => ({ [index]: true }))
-            .reduce((acc, cur) => {
-                return { ...acc, ...cur }
-            }, {})
-
-        table.setRowSelection(rowsIndexObj)
+            .reduce((acc, cur) => ({ ...acc, ...cur }), {})
     }, [form, table])
+
+    // Select rows with useEffect
+    useEffect(() => {
+        if (Object.keys(rowsIndexObj).length > 0) {
+            table.setRowSelection(rowsIndexObj)
+        }
+    }, [table, rowsIndexObj])
 
     const handleFilterChange = (value: boolean | string) => {
         if (typeof value === 'boolean') {

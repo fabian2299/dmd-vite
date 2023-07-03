@@ -14,8 +14,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../../../../components/ui/select'
-import { TypeValues } from '@/types/characteristic'
 import { type UpdateCharDTO } from '../../slices/charFormSlice'
+import { Type } from '@/types/characteristic'
+import { capitalize } from '@/utils/utils'
 
 interface CharDetailsMainProps {
     form: UseFormReturn<UpdateCharDTO, unknown, undefined>
@@ -71,11 +72,11 @@ export function CharDetailsMain({ form }: CharDetailsMainProps) {
                 name="type"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Geometry type (*)</FormLabel>
+                        <FormLabel>Type (*)</FormLabel>
                         <Select
                             onValueChange={(value) => {
                                 field.onChange(
-                                    value as (typeof TypeValues)[keyof typeof TypeValues]
+                                    value as unknown as React.ChangeEvent<HTMLInputElement>
                                 )
                             }}
                             defaultValue={field.value}
@@ -86,13 +87,9 @@ export function CharDetailsMain({ form }: CharDetailsMainProps) {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {Object.values(TypeValues).map((value) => (
-                                    <SelectItem
-                                        key={value}
-                                        value={value}
-                                        className="capitalize"
-                                    >
-                                        {value}
+                                {Type.options.map((type) => (
+                                    <SelectItem key={type} value={type}>
+                                        {capitalize(type)}
                                     </SelectItem>
                                 ))}
                             </SelectContent>

@@ -9,15 +9,15 @@ import { useDataTable } from '@/hooks/use-data-table'
 import { classCharColumns } from '../../utils/class-char-columns'
 import { useGetCharsQuery } from '../../../chars/services/chars'
 import { Loader2 } from 'lucide-react'
-import { type CreateClassDTO } from '../../slices/classFormSlice'
 import { type UseFormReturn } from 'react-hook-form'
 import { Switch } from '../../../../components/ui/switch'
 import { Label } from '../../../../components/ui/label'
+import { type UpdateClassDTO } from '@/features/classes/slices/classFormSlice'
 
 export function ClassDetailsChars({
     form,
 }: {
-    form: UseFormReturn<CreateClassDTO, unknown, undefined>
+    form: UseFormReturn<UpdateClassDTO, unknown, undefined>
 }) {
     const { data: chars, isLoading } = useGetCharsQuery()
 
@@ -39,7 +39,7 @@ function CharTable({
     form,
 }: {
     data: Characteristic[]
-    form: UseFormReturn<CreateClassDTO, unknown, undefined>
+    form: UseFormReturn<UpdateClassDTO, unknown, undefined>
 }) {
     const { table, rowSelection, globalFilter, setGlobalFilter, columns } =
         useDataTable<Characteristic>({
@@ -53,39 +53,36 @@ function CharTable({
             return []
         }
 
-        return table
-            .getSelectedRowModel()
-            .rows.map((row) => row.original.id.toString())
+        return table.getSelectedRowModel().rows.map((row) => ({
+            id: row.original.id,
+        }))
     }, [rowSelection, table])
-
-    console.log('selectedRows', selectedRows)
 
     // Update form value with useEffect
     useEffect(() => {
-        form.setValue('charIds', selectedRows)
+        form.setValue('characteristics', selectedRows)
     }, [form, selectedRows])
 
     // set rowSelection with useEffect
     const rowsIndexObj = useMemo(() => {
-        const charIds = form.getValues('charIds')
-        if (charIds.length === 0) return {}
+        const characteristics = form.getValues('characteristics')
+        if (characteristics.length === 0) return {}
 
-        const selectedRows = charIds.map((id) => id.toString())
+        const selectedRowIds = characteristics.map((char) => char.id)
 
         const checkRows = table.getCoreRowModel().rows.filter((row) => {
-            return selectedRows
-                .map((id) => id)
-                .includes(row.original.id.toString())
+            return selectedRowIds.includes(row.original.id)
         })
 
         const getRowIndex = (rowId: string) => {
             const row = table.getRow(rowId)
-            return row.index
+            return row ? row.index : -1
         }
 
         const rowsIndex = checkRows.map((row) => getRowIndex(row.id))
 
         return rowsIndex
+            .filter((index) => index !== null)
             .map((index) => ({ [index]: true }))
             .reduce((acc, cur) => {
                 return { ...acc, ...cur }
